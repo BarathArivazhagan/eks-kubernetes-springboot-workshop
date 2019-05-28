@@ -5,7 +5,7 @@ resource "local_file" "config_map_aws_auth" {
 }
 
 resource "null_resource" "update_config_map_aws_auth" {
-  depends_on = ["aws_eks_cluster.this"]
+  depends_on = ["aws_eks_cluster.eks-cluster"]
 
   provisioner "local-exec" {
     working_dir = "${path.module}"
@@ -23,7 +23,7 @@ EOS
     interpreter = ["${var.local_exec_interpreter}"]
   }
 
-  triggers {
+  triggers = {
     kube_config_map_rendered = "${data.template_file.kubeconfig.rendered}"
     config_map_rendered      = "${data.template_file.config_map_aws_auth.rendered}"
     endpoint                 = "${aws_eks_cluster.eks-cluster.endpoint}"
