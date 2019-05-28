@@ -6,9 +6,9 @@ resource "aws_autoscaling_group" "workers" {
   max_size              = "${lookup(var.worker_groups[count.index], "asg_max_size", local.workers_group_defaults["asg_max_size"])}"
   min_size              = "${lookup(var.worker_groups[count.index], "asg_min_size", local.workers_group_defaults["asg_min_size"])}"
   force_delete          = "${lookup(var.worker_groups[count.index], "asg_force_delete", local.workers_group_defaults["asg_force_delete"])}"
-  target_group_arns     = ["${compact(split(",", coalesce(lookup(var.worker_groups[count.index], "target_group_arns", ""), local.workers_group_defaults["target_group_arns"])))}"]
+ // target_group_arns     = ["${compact(split(",", local.workers_group_defaults["target_group_arns"]))}"]
   launch_configuration  = "${element(aws_launch_configuration.workers.*.id, count.index)}"
-  vpc_zone_identifier   = ["${split(",", coalesce(lookup(var.worker_groups[count.index], "subnets", ""), local.workers_group_defaults["subnets"]))}"]
+ // vpc_zone_identifier   = ["${split(",", coalesce(lookup(var.worker_groups[count.index], "subnets", ""), local.workers_group_defaults["subnets"]))}"]
   protect_from_scale_in = "${lookup(var.worker_groups[count.index], "protect_from_scale_in", local.workers_group_defaults["protect_from_scale_in"])}"
   //enabled_metrics       = ["${compact(split(",", coalesce(lookup(var.worker_groups[count.index], ""), local.workers_group_defaults["enabled_metrics"])))}"]suspended_processes   = ["${compact(split(",", coalesce(lookup(var.worker_groups[count.index], "suspended_processes", ""), local.workers_group_defaults["suspended_processes"])))}"]
 
