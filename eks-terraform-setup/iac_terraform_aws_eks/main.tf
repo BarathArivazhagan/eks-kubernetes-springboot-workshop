@@ -140,7 +140,7 @@ resource "aws_security_group" "all_worker_mgmt" {
 }
 
 module "vpc" {
-  source             = "vpc"
+  source             = "./vpc"
   name               = "${vpc_name}"
   cidr               = "${vpc_cidr_block}"
   azs                = ["${data.aws_availability_zones.available.names[0]}", "${data.aws_availability_zones.available.names[1]}", "${data.aws_availability_zones.available.names[2]}"]
@@ -152,7 +152,7 @@ module "vpc" {
 }
 
 module "eks" {
-  source                               = "eks"
+  source                               = "./eks"
   cluster_name                         = "${local.cluster_name}"
   subnets                              = ["${module.vpc.private_subnets}"]
   tags                                 = "${local.tags}"
