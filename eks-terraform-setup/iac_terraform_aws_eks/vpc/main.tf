@@ -59,9 +59,9 @@ resource "aws_route_table" "public" {
 resource "aws_route" "public_internet_gateway" {
   count = "${var.create_vpc && length(var.public_subnets) > 0 ? 1 : 0}"
 
-  route_table_id         = "${aws_route_table.public.id}"
+  route_table_id         = "${aws_route_table.public[count.index]}"
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = "${aws_internet_gateway.this.id}"
+  gateway_id             = "${aws_internet_gateway.this[count.index]}"
 
   timeouts {
     create = "5m"
@@ -174,7 +174,7 @@ resource "aws_vpc_endpoint" "ecr_api" {
   count = "${var.create_vpc && var.enable_ecr_api_endpoint ? 1 : 0}"
 
   vpc_id            = "${local.vpc_id}"
-  service_name      = "${data.aws_vpc_endpoint_service.ecr_api.service_name}"
+  service_name      = "${data.aws_vpc_endpoint_service.ecr_api[count.index]}"
   vpc_endpoint_type = "Interface"
 
   security_group_ids  = ["${var.ecr_api_endpoint_security_group_ids}"]
@@ -195,7 +195,7 @@ resource "aws_vpc_endpoint" "ecr_dkr" {
   count = "${var.create_vpc && var.enable_ecr_dkr_endpoint ? 1 : 0}"
 
   vpc_id            = "${local.vpc_id}"
-  service_name      = "${data.aws_vpc_endpoint_service.ecr_dkr.service_name}"
+  service_name      = "${data.aws_vpc_endpoint_service.ecr_dkr[count.index]}"
   vpc_endpoint_type = "Interface"
 
   security_group_ids  = ["${var.ecr_dkr_endpoint_security_group_ids}"]
@@ -220,6 +220,6 @@ resource "aws_route_table_association" "public" {
   count = "${var.create_vpc && length(var.public_subnets) > 0 ? length(var.public_subnets) : 0}"
 
   subnet_id      = "${element(aws_subnet.public.*.id, count.index)}"
-  route_table_id = "${aws_route_table.public.id}"
+  route_table_id = "${aws_route_table.public[count.index]}"
 }
 
