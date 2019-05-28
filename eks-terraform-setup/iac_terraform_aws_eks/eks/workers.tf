@@ -17,10 +17,10 @@ resource "aws_autoscaling_group" "workers" {
 
   tags = ["${concat(
     list(
-      map("key", "Name", "value", "${aws_eks_cluster.this.name}-${lookup(var.worker_groups[count.index], "name", count.index)}-eks_asg", "propagate_at_launch", true),
-      map("key", "kubernetes.io/cluster/${aws_eks_cluster.this.name}", "value", "owned", "propagate_at_launch", true),
+      map("key", "Name", "value", "${aws_eks_cluster.eks-cluster.name}-${lookup(var.worker_groups[count.index], "name", count.index)}-eks_asg", "propagate_at_launch", true),
+      map("key", "kubernetes.io/cluster/${aws_eks_cluster.eks-cluster.name}", "value", "owned", "propagate_at_launch", true),
       map("key", "k8s.io/cluster-autoscaler/${lookup(var.worker_groups[count.index], "autoscaling_enabled", local.workers_group_defaults["autoscaling_enabled"]) == 1 ? "enabled" : "disabled"  }", "value", "true", "propagate_at_launch", false),
-      map("key", "k8s.io/cluster-autoscaler/${aws_eks_cluster.this.name}", "value", "", "propagate_at_launch", false),
+      map("key", "k8s.io/cluster-autoscaler/${aws_eks_cluster.eks-cluster.name}", "value", "", "propagate_at_launch", false),
       map("key", "k8s.io/cluster-autoscaler/node-template/resources/ephemeral-storage", "value", "${lookup(var.worker_groups[count.index], "root_volume_size", local.workers_group_defaults["root_volume_size"])}Gi", "propagate_at_launch", false)
     ),
     local.asg_tags,
@@ -66,7 +66,7 @@ resource "aws_security_group" "workers" {
   description = "Security group for all nodes in the cluster."
   vpc_id      = "${var.vpc_id}"
   count       = "${var.worker_create_security_group ? 1 : 0}"
-  tags        = "${merge(var.tags, map("Name", "${aws_eks_cluster.this.name}-eks_worker_sg", "kubernetes.io/cluster/${aws_eks_cluster.this.name}", "owned"
+  tags        = "${merge(var.tags, map("Name", "${aws_eks_cluster.eks-cluster.name}-eks_worker_sg", "kubernetes.io/cluster/${aws_eks_cluster.eks-cluster.name}", "owned"
   ))}"
 }
 
