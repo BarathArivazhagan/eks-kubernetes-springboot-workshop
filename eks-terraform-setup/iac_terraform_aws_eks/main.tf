@@ -8,7 +8,7 @@ provider "aws" {
 }
 
 provider "random" {
-  version = "= 1.3.1"
+  version = "~> 2.1"
 }
 
 data "aws_availability_zones" "available" {}
