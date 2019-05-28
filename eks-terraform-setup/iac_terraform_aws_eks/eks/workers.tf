@@ -10,8 +10,8 @@ resource "aws_autoscaling_group" "workers" {
   launch_configuration  = "${element(aws_launch_configuration.workers.*.id, count.index)}"
   vpc_zone_identifier   = ["${split(",", coalesce(lookup(var.worker_groups[count.index], "subnets", ""), local.workers_group_defaults["subnets"]))}"]
   protect_from_scale_in = "${lookup(var.worker_groups[count.index], "protect_from_scale_in", local.workers_group_defaults["protect_from_scale_in"])}"
-  suspended_processes   = ["${compact(split(",", coalesce(lookup(var.worker_groups[count.index], "suspended_processes", ""), local.workers_group_defaults["suspended_processes"])))}"]
-  enabled_metrics       = ["${compact(split(",", coalesce(lookup(var.worker_groups[count.index], "enabled_metrics", ""), local.workers_group_defaults["enabled_metrics"])))}"]
+  //enabled_metrics       = ["${compact(split(",", coalesce(lookup(var.worker_groups[count.index], ""), local.workers_group_defaults["enabled_metrics"])))}"]suspended_processes   = ["${compact(split(",", coalesce(lookup(var.worker_groups[count.index], "suspended_processes", ""), local.workers_group_defaults["suspended_processes"])))}"]
+
   count                 = "${var.worker_group_count}"
   placement_group       = "${lookup(var.worker_groups[count.index], "placement_group", local.workers_group_defaults["placement_group"])}"
 
@@ -37,7 +37,7 @@ resource "aws_autoscaling_group" "workers" {
 resource "aws_launch_configuration" "workers" {
   name_prefix                 = "${aws_eks_cluster.eks-cluster.name}-${lookup(var.worker_groups[count.index], "name", count.index)}"
   associate_public_ip_address = "${lookup(var.worker_groups[count.index], "public_ip", local.workers_group_defaults["public_ip"])}"
-  security_groups             = ["${local.worker_security_group_id}", "${var.worker_additional_security_group_ids}", "${compact(split(",",lookup(var.worker_groups[count.index],"additional_security_group_ids", local.workers_group_defaults["additional_security_group_ids"])))}"]
+  security_groups             = ["${local.worker_security_group_id}"]
   iam_instance_profile        = "${element(aws_iam_instance_profile.workers.*.id, count.index)}"
   image_id                    = "${lookup(var.worker_groups[count.index], "ami_id", local.workers_group_defaults["ami_id"])}"
   instance_type               = "${lookup(var.worker_groups[count.index], "instance_type", local.workers_group_defaults["instance_type"])}"
@@ -73,7 +73,7 @@ resource "aws_security_group" "workers" {
 resource "aws_security_group_rule" "workers_egress_internet" {
   description       = "Allow nodes all egress to the Internet."
   protocol          = "-1"
-  security_group_id = "${aws_security_group.workers.id}"
+  security_group_id = "${aws_security_group.workers[count.index]}"
   cidr_blocks       = ["0.0.0.0/0"]
   from_port         = 0
   to_port           = 0
@@ -84,8 +84,8 @@ resource "aws_security_group_rule" "workers_egress_internet" {
 resource "aws_security_group_rule" "workers_ingress_self" {
   description              = "Allow node to communicate with each other."
   protocol                 = "-1"
-  security_group_id        = "${aws_security_group.workers.id}"
-  source_security_group_id = "${aws_security_group.workers.id}"
+  security_group_id        = "${aws_security_group.workers[count.index]}"
+  source_security_group_id = "${aws_security_group.workers[count.index]}"
   from_port                = 0
   to_port                  = 65535
   type                     = "ingress"
@@ -95,7 +95,7 @@ resource "aws_security_group_rule" "workers_ingress_self" {
 resource "aws_security_group_rule" "workers_ingress_cluster" {
   description              = "Allow workers Kubelets and pods to receive communication from the cluster control plane."
   protocol                 = "tcp"
-  security_group_id        = "${aws_security_group.workers.id}"
+  security_group_id        = "${aws_security_group.workers[count.index]}"
   source_security_group_id = "${local.cluster_security_group_id}"
   from_port                = "${var.worker_sg_ingress_from_port}"
   to_port                  = 65535
@@ -106,7 +106,7 @@ resource "aws_security_group_rule" "workers_ingress_cluster" {
 resource "aws_security_group_rule" "workers_ingress_cluster_https" {
   description              = "Allow pods running extension API servers on port 443 to receive communication from cluster control plane."
   protocol                 = "tcp"
-  security_group_id        = "${aws_security_group.workers.id}"
+  security_group_id        = "${aws_security_group.workers[count.index]}"
   source_security_group_id = "${local.cluster_security_group_id}"
   from_port                = 443
   to_port                  = 443
