@@ -66,7 +66,7 @@ locals {
       additional_userdata  = "echo foo bar"
       subnets              = "${module.vpc.private_subnets}"
       asg_desired_capacity = "2"
-    },
+    }
   ]
   worker_groups_launch_template = [
     {
@@ -79,7 +79,7 @@ locals {
       asg_desired_capacity                     = "2"
       spot_instance_pools                      = 10
       on_demand_percentage_above_base_capacity = "0"
-    },
+    }
   ]
   tags = {
     Environment = "${var.environment}"

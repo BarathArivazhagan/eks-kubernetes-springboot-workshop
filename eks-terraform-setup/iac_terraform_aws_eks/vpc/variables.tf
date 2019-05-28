@@ -149,49 +149,56 @@ variable "map_public_ip_on_launch" {
 
 variable "nat_eip_tags" {
   description = "EIP Tags"
-  default     = []
-  type = "list"
+  type = "map"
+  default     =  {}
 }
 
 variable "nat_gateway_tags" {
   description = "EIP Tags"
-  default     = []
-  type = "list"
+  default     = {}
+  type = "map"
 }
 
 variable "tags" {
   description = "A map of tags to add to all resources"
-  default     = ""
+  type = "map"
+  default     =  {}
 }
 
 variable "vpc_tags" {
   description = "Additional tags for the VPC"
-  default     = ""
+  type = "map"
+  default     = {}
 }
 
 variable "igw_tags" {
   description = "Additional tags for the internet gateway"
-  default     = ""
+  default     = {}
+  type = "map"
 }
 
 variable "public_subnet_tags" {
   description = "Additional tags for the public subnets"
-  default     = ""
+  default     = {}
+  type = "map"
 }
 
 variable "private_subnet_tags" {
   description = "Additional tags for the private subnets"
-  default     = ""
+  default     = {}
+  type = "map"
 }
 
 variable "public_route_table_tags" {
   description = "Additional tags for the public route tables"
-  default     = ""
+  default     = {}
+  type = "map"
 }
 
 variable "private_route_table_tags" {
   description = "Additional tags for the private route tables"
-  default     = ""
+  default     = {}
+  type = "map"
 }
 
 

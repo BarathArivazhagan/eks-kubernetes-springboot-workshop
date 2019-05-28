@@ -264,6 +264,12 @@ variable "worker_group_launch_template_tags" {
   }
 }
 
+variable "workers_group_launch_template_defaults" {
+  description = "Override default values for target groups. See workers_group_defaults_defaults in local.tf for valid keys."
+  type        = "map"
+  default     = {}
+}
+
 variable "cluster_endpoint_public_access" {
   description = "Indicates whether or not the Amazon EKS public API server endpoint is enabled."
   default     = true
