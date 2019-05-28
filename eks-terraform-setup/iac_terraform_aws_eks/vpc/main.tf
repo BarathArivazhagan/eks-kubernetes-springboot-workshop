@@ -28,7 +28,7 @@ resource "aws_vpc" "eks-vpc" {
 resource "aws_vpc_ipv4_cidr_block_association" "eks-secondary-cidr" {
   count = "${var.create_vpc && length(var.secondary_cidr_blocks) > 0 ? length(var.secondary_cidr_blocks) : 0}"
 
-  vpc_id = "${aws_vpc.eks-vpc[count.index]}"
+  vpc_id = "${aws_vpc.eks-vpc.id}"
 
   cidr_block = "${element(var.secondary_cidr_blocks, count.index)}"
 }
@@ -59,13 +59,10 @@ resource "aws_route_table" "public" {
 resource "aws_route" "public_internet_gateway" {
   count = "${var.create_vpc && length(var.public_subnets) > 0 ? 1 : 0}"
 
-  route_table_id         = "${aws_route_table.public[0].id}"
+  route_table_id         = "${aws_route_table.public.id}"
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = "${aws_internet_gateway.this[0].id}"
+  gateway_id             = "${aws_internet_gateway.this.id}"
 
-  timeouts {
-    create = "5m"
-  }
 }
 
 #################
@@ -95,7 +92,7 @@ resource "aws_subnet" "public" {
   vpc_id                  = "${local.vpc_id}"
   cidr_block              = "${element(concat(var.public_subnets, list("")), count.index)}"
   availability_zone       = "${element(var.azs, count.index)}"
-  map_public_ip_on_launch =  var.map_public_ip_on_launch
+  map_public_ip_on_launch = "${var.map_public_ip_on_launch}"
 
   tags = "${merge(map("Name", format("%s-${var.public_subnet_suffix}-%s", var.name, element(var.azs, count.index))), var.tags, var.public_subnet_tags)}"
 }
@@ -106,7 +103,7 @@ resource "aws_subnet" "public" {
 resource "aws_subnet" "private" {
   count = "${var.create_vpc && length(var.private_subnets) > 0 ? length(var.private_subnets) : 0}"
 
-  vpc_id            =  local.vpc_id
+  vpc_id            =  "${local.vpc_id}"
   cidr_block        = "${var.private_subnets[count.index]}"
   availability_zone = "${element(var.azs, count.index)}"
 
@@ -174,7 +171,7 @@ resource "aws_vpc_endpoint" "ecr_api" {
   count = "${var.create_vpc && var.enable_ecr_api_endpoint ? 1 : 0}"
 
   vpc_id            = "${local.vpc_id}"
-  service_name      = "${data.aws_vpc_endpoint_service.ecr_api[count.index]}"
+  service_name      = "${data.aws_vpc_endpoint_service.ecr_api.id}"
   vpc_endpoint_type = "Interface"
 
   security_group_ids  = "${var.ecr_api_endpoint_security_group_ids}"
@@ -195,7 +192,7 @@ resource "aws_vpc_endpoint" "ecr_dkr" {
   count = "${var.create_vpc && var.enable_ecr_dkr_endpoint ? 1 : 0}"
 
   vpc_id            = "${local.vpc_id}"
-  service_name      = "${data.aws_vpc_endpoint_service.ecr_dkr[count.index]}"
+  service_name      = "${data.aws_vpc_endpoint_service.ecr_dkr.id}"
   vpc_endpoint_type = "Interface"
 
   security_group_ids  = "${var.ecr_dkr_endpoint_security_group_ids}"
@@ -220,6 +217,6 @@ resource "aws_route_table_association" "public" {
   count = "${var.create_vpc && length(var.public_subnets) > 0 ? length(var.public_subnets) : 0}"
 
   subnet_id      = "${element(aws_subnet.public.*.id, count.index)}"
-  route_table_id = "${aws_route_table.public[0].id}"
+  route_table_id = "${aws_route_table.public.id}"
 }
 
