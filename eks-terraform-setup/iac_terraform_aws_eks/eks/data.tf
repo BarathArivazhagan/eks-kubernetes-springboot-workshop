@@ -48,9 +48,9 @@ data "template_file" "kubeconfig" {
 
   vars = {
     kubeconfig_name                   = "${local.kubeconfig_name}"
-    endpoint                          = "${aws_eks_cluster.this.endpoint}"
+    endpoint                          = "${aws_eks_cluster.eks-cluster.endpoint}"
     region                            = "${data.aws_region.current.name}"
-    cluster_auth_base64               = "${aws_eks_cluster.this.certificate_authority.0.data}"
+    cluster_auth_base64               = "${aws_eks_cluster.eks-cluster.certificate_authority.0.data}"
     aws_authenticator_command         = "${var.kubeconfig_aws_authenticator_command}"
     aws_authenticator_command_args    = "${length(var.kubeconfig_aws_authenticator_command_args) > 0 ? "        - ${join("\n        - ", var.kubeconfig_aws_authenticator_command_args)}" : "        - ${join("\n        - ", formatlist("\"%s\"", list("token", "-i", aws_eks_cluster.this.name)))}"}"
     aws_authenticator_additional_args = "${length(var.kubeconfig_aws_authenticator_additional_args) > 0 ? "        - ${join("\n        - ", var.kubeconfig_aws_authenticator_additional_args)}" : ""}"
@@ -77,9 +77,9 @@ data "template_file" "userdata" {
   count    = "${var.worker_group_count}"
 
   vars = {
-    cluster_name         = "${aws_eks_cluster.this.name}"
-    endpoint             = "${aws_eks_cluster.this.endpoint}"
-    cluster_auth_base64  = "${aws_eks_cluster.this.certificate_authority.0.data}"
+    cluster_name         = "${aws_eks_cluster.eks-cluster.name}"
+    endpoint             = "${aws_eks_cluster.eks-cluster.endpoint}"
+    cluster_auth_base64  = "${aws_eks_cluster.eks-cluster.certificate_authority.0.data}"
     pre_userdata         = "${lookup(var.worker_groups[count.index], "pre_userdata", local.workers_group_defaults["pre_userdata"])}"
     additional_userdata  = "${lookup(var.worker_groups[count.index], "additional_userdata", local.workers_group_defaults["additional_userdata"])}"
     enable_docker_bridge = "${lookup(var.worker_groups[count.index], "enable_docker_bridge", local.workers_group_defaults["enable_docker_bridge"])}"
@@ -92,9 +92,9 @@ data "template_file" "launch_template_userdata" {
   count    = "${var.worker_group_launch_template_count}"
 
   vars = {
-    cluster_name         = "${aws_eks_cluster.this.name}"
-    endpoint             = "${aws_eks_cluster.this.endpoint}"
-    cluster_auth_base64  = "${aws_eks_cluster.this.certificate_authority.0.data}"
+    cluster_name         = "${aws_eks_cluster.eks-cluster.name}"
+    endpoint             = "${aws_eks_cluster.eks-cluster.endpoint}"
+    cluster_auth_base64  = "${aws_eks_cluster.eks-cluster.certificate_authority.0.data}"
     pre_userdata         = "${lookup(var.worker_groups_launch_template[count.index], "pre_userdata", local.workers_group_launch_template_defaults["pre_userdata"])}"
     additional_userdata  = "${lookup(var.worker_groups_launch_template[count.index], "additional_userdata", local.workers_group_launch_template_defaults["additional_userdata"])}"
     enable_docker_bridge = "${lookup(var.worker_groups_launch_template[count.index], "enable_docker_bridge", local.workers_group_launch_template_defaults["enable_docker_bridge"])}"
