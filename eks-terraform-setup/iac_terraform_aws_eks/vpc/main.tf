@@ -59,9 +59,9 @@ resource "aws_route_table" "public" {
 resource "aws_route" "public_internet_gateway" {
   count = "${var.create_vpc && length(var.public_subnets) > 0 ? 1 : 0}"
 
-  route_table_id         = "${aws_route_table.public[count.index]}"
+  route_table_id         = "${aws_route_table.public[0].id}"
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = "${aws_internet_gateway.this[count.index]}"
+  gateway_id             = "${aws_internet_gateway.this[0].id}"
 
   timeouts {
     create = "5m"
@@ -95,7 +95,7 @@ resource "aws_subnet" "public" {
   vpc_id                  = "${local.vpc_id}"
   cidr_block              = "${element(concat(var.public_subnets, list("")), count.index)}"
   availability_zone       = "${element(var.azs, count.index)}"
-  map_public_ip_on_launch = "${var.map_public_ip_on_launch}"
+  map_public_ip_on_launch =  var.map_public_ip_on_launch
 
   tags = "${merge(map("Name", format("%s-${var.public_subnet_suffix}-%s", var.name, element(var.azs, count.index))), var.tags, var.public_subnet_tags)}"
 }
@@ -106,7 +106,7 @@ resource "aws_subnet" "public" {
 resource "aws_subnet" "private" {
   count = "${var.create_vpc && length(var.private_subnets) > 0 ? length(var.private_subnets) : 0}"
 
-  vpc_id            = "${local.vpc_id}"
+  vpc_id            =  local.vpc_id
   cidr_block        = "${var.private_subnets[count.index]}"
   availability_zone = "${element(var.azs, count.index)}"
 

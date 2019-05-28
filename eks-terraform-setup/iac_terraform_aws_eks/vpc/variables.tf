@@ -39,11 +39,6 @@ variable "private_subnet_suffix" {
   default     = "private"
 }
 
-variable "intra_subnet_suffix" {
-  description = "Suffix to append to intra subnets name"
-  default     = "intra"
-}
-
 
 variable "public_subnets" {
   description = "A list of public subnets inside the VPC"
