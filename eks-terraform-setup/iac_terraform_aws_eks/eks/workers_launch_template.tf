@@ -1,7 +1,7 @@
 # Worker Groups using Launch Templates
 
 resource "aws_autoscaling_group" "workers_launch_template" {
-  name_prefix       = "${aws_eks_cluster.this.name}-${lookup(var.worker_groups_launch_template[count.index], "name", count.index)}"
+  name_prefix       = "${aws_eks_cluster.eks-cluster.name}-${lookup(var.worker_groups_launch_template[count.index], "name", count.index)}"
   desired_capacity  = "${lookup(var.worker_groups_launch_template[count.index], "asg_desired_capacity", local.workers_group_launch_template_defaults["asg_desired_capacity"])}"
   max_size          = "${lookup(var.worker_groups_launch_template[count.index], "asg_max_size", local.workers_group_launch_template_defaults["asg_max_size"])}"
   min_size          = "${lookup(var.worker_groups_launch_template[count.index], "asg_min_size", local.workers_group_launch_template_defaults["asg_min_size"])}"
@@ -60,7 +60,7 @@ resource "aws_autoscaling_group" "workers_launch_template" {
 }
 
 resource "aws_launch_template" "workers_launch_template" {
-  name_prefix = "${aws_eks_cluster.this.name}-${lookup(var.worker_groups_launch_template[count.index], "name", count.index)}"
+  name_prefix = "${aws_eks_cluster.eks-cluster.name}-${lookup(var.worker_groups_launch_template[count.index], "name", count.index)}"
 
   network_interfaces {
     associate_public_ip_address = "${lookup(var.worker_groups_launch_template[count.index], "public_ip", local.workers_group_launch_template_defaults["public_ip"])}"
@@ -106,7 +106,7 @@ resource "aws_launch_template" "workers_launch_template" {
 }
 
 resource "aws_iam_instance_profile" "workers_launch_template" {
-  name_prefix = "${aws_eks_cluster.this.name}"
+  name_prefix = "${aws_eks_cluster.eks-cluster.name}"
   role        = "${lookup(var.worker_groups_launch_template[count.index], "iam_role_id",  lookup(local.workers_group_launch_template_defaults, "iam_role_id"))}"
   count       = "${var.worker_group_launch_template_count}"
   path        = "${var.iam_path}"
