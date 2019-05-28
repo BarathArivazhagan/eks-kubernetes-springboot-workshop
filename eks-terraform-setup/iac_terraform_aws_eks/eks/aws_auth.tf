@@ -67,7 +67,7 @@ data "template_file" "map_users" {
   count    = "${var.map_users_count}"
   template = "${file("${path.module}/templates/config-map-aws-auth-map_users.yaml.tpl")}"
 
-  vars {
+  vars = {
     user_arn = "${lookup(var.map_users[count.index], "user_arn")}"
     username = "${lookup(var.map_users[count.index], "username")}"
     group    = "${lookup(var.map_users[count.index], "group")}"
@@ -78,7 +78,7 @@ data "template_file" "map_roles" {
   count    = "${var.map_roles_count}"
   template = "${file("${path.module}/templates/config-map-aws-auth-map_roles.yaml.tpl")}"
 
-  vars {
+  vars = {
     role_arn = "${lookup(var.map_roles[count.index], "role_arn")}"
     username = "${lookup(var.map_roles[count.index], "username")}"
     group    = "${lookup(var.map_roles[count.index], "group")}"
@@ -89,7 +89,7 @@ data "template_file" "map_accounts" {
   count    = "${var.map_accounts_count}"
   template = "${file("${path.module}/templates/config-map-aws-auth-map_accounts.yaml.tpl")}"
 
-  vars {
+  vars = {
     account_number = "${element(var.map_accounts, count.index)}"
   }
 }

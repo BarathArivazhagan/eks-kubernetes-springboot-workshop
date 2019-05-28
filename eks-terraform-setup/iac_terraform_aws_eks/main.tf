@@ -14,7 +14,7 @@ provider "random" {
 data "aws_availability_zones" "available" {}
 
 locals {
-  cluster_name = "${cluster_name}-${random_string.suffix.result}"
+  cluster_name = "${var.cluster_name}-${random_string.suffix.result}"
 
   # the commented out worker group list below shows an example of how to define
   # multiple worker groups of differing configurations
@@ -82,7 +82,7 @@ locals {
     },
   ]
   tags = {
-    Environment = "${environment}"
+    Environment = "${var.environment}"
   }
 }
 
@@ -141,11 +141,11 @@ resource "aws_security_group" "all_worker_mgmt" {
 
 module "vpc" {
   source             = "./vpc"
-  name               = "${vpc_name}"
-  cidr               = "${vpc_cidr_block}"
+  name               = "${var.vpc_name}"
+  cidr               = "${var.vpc_cidr_block}"
   azs                = ["${data.aws_availability_zones.available.names[0]}", "${data.aws_availability_zones.available.names[1]}", "${data.aws_availability_zones.available.names[2]}"]
-  private_subnets    = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  public_subnets     = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
+  private_subnets    = "${var.vpc_private_subnets}"
+  public_subnets     = "${var.vpc_public_subnets}"
   enable_nat_gateway = true
   single_nat_gateway = true
   tags               = "${merge(local.tags, map("kubernetes.io/cluster/${local.cluster_name}", "shared"))}"

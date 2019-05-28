@@ -46,7 +46,7 @@ data "aws_iam_policy_document" "cluster_assume_role_policy" {
 data "template_file" "kubeconfig" {
   template = "${file("${path.module}/templates/kubeconfig.tpl")}"
 
-  vars {
+  vars = {
     kubeconfig_name                   = "${local.kubeconfig_name}"
     endpoint                          = "${aws_eks_cluster.this.endpoint}"
     region                            = "${data.aws_region.current.name}"
@@ -66,7 +66,7 @@ EOF
 
   count = "${length(var.kubeconfig_aws_authenticator_env_variables)}"
 
-  vars {
+  vars = {
     value = "${element(values(var.kubeconfig_aws_authenticator_env_variables), count.index)}"
     key   = "${element(keys(var.kubeconfig_aws_authenticator_env_variables), count.index)}"
   }
@@ -76,7 +76,7 @@ data "template_file" "userdata" {
   template = "${file("${path.module}/templates/userdata.sh.tpl")}"
   count    = "${var.worker_group_count}"
 
-  vars {
+  vars = {
     cluster_name         = "${aws_eks_cluster.this.name}"
     endpoint             = "${aws_eks_cluster.this.endpoint}"
     cluster_auth_base64  = "${aws_eks_cluster.this.certificate_authority.0.data}"
@@ -91,7 +91,7 @@ data "template_file" "launch_template_userdata" {
   template = "${file("${path.module}/templates/userdata.sh.tpl")}"
   count    = "${var.worker_group_launch_template_count}"
 
-  vars {
+  vars = {
     cluster_name         = "${aws_eks_cluster.this.name}"
     endpoint             = "${aws_eks_cluster.this.endpoint}"
     cluster_auth_base64  = "${aws_eks_cluster.this.certificate_authority.0.data}"
