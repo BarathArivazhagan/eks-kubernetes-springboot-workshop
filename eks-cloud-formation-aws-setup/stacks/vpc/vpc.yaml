@@ -1,0 +1,217 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: EKS VPC with three public and private subnets
+Parameters:
+  VPCCIDR:
+    Type: String
+    Description: CIDR block to be created
+    Default: 10.0.0.0/16
+Resources:
+  VPC:
+    Type: "AWS::EC2::VPC"
+    Properties:
+      CidrBlock: !Ref VPCCIDR
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value:  !Join ['', [!Ref "AWS::StackName", "-vpc" ]]
+  PublicSubnet01:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Select [0,!Cidr [!Ref VPCCIDR,6,8]]
+      AvailabilityZone: !Select
+        - 0
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub
+            - "${AWS::StackName}-public-${AZ}"
+            - AZ: !Select
+                - 0
+                - Fn::GetAZs: !Ref 'AWS::Region'
+  PublicSubnet02:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Select [1,!Cidr [!Ref VPCCIDR,6,8]]
+      AvailabilityZone: !Select
+        - 1
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub
+            - "${AWS::StackName}-public-${AZ}"
+            - AZ: !Select
+                - 1
+                - Fn::GetAZs: !Ref 'AWS::Region'
+  PublicSubnet03:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Select [2,!Cidr [!Ref VPCCIDR,6,8]]
+      AvailabilityZone: !Select
+        - 2
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub
+            - "${AWS::StackName}-public-${AZ}"
+            - AZ: !Select
+                - 2
+                - Fn::GetAZs: !Ref 'AWS::Region'
+  PrivateSubnet01:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Select [3,!Cidr [!Ref VPCCIDR,6,8]]
+      AvailabilityZone: !Select
+        - 0
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Sub
+            - "${AWS::StackName}-private-${AZ}"
+            - AZ: !Select
+                - 0
+                - Fn::GetAZs: !Ref 'AWS::Region'
+  PrivateSubnet02:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Select [4,!Cidr [!Ref VPCCIDR,6,8]]
+      AvailabilityZone: !Select
+        - 1
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Sub
+            - "${AWS::StackName}-private-${AZ}"
+            - AZ: !Select
+                - 1
+                - Fn::GetAZs: !Ref 'AWS::Region'
+  PrivateSubnet03:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Select [5,!Cidr [!Ref VPCCIDR,6,8]]
+      AvailabilityZone: !Select
+        - 2
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Sub
+            - "${AWS::StackName}-private-${AZ}"
+            - AZ: !Select
+                - 2
+                - Fn::GetAZs: !Ref 'AWS::Region'
+  RouteTablePrivate:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-private-route-table
+  RouteTablePublic:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-public-route-table
+  RouteTableAssociationPublicSubnet01:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PublicSubnet01
+      RouteTableId: !Ref RouteTablePublic
+  RouteTableAssociationPublicSubnet02:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PublicSubnet02
+      RouteTableId: !Ref RouteTablePublic
+  RouteTableAssociationPublicSubnet03:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PublicSubnet03
+      RouteTableId: !Ref RouteTablePublic
+  RouteTableAssociationPrivateSubnet01:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PrivateSubnet01
+      RouteTableId: !Ref RouteTablePrivate
+  RouteTableAssociationPrivateSubnet02:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PrivateSubnet02
+      RouteTableId: !Ref RouteTablePrivate
+  RouteTableAssociationPrivateSubnet03:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PrivateSubnet03
+      RouteTableId: !Ref RouteTablePrivate
+  InternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-internet-gateway
+  InternetGatewayAttachment:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+  InternetGatewayRoute:
+    Type: 'AWS::EC2::Route'
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref RouteTablePublic
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref InternetGateway
+  EIP:
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+  NatGateway:
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId: !GetAtt 'EIP.AllocationId'
+      SubnetId: !Ref PublicSubnet01
+  NatGatewayRoute:
+    Type: 'AWS::EC2::Route'
+    DependsOn: NatGateway
+    Properties:
+      RouteTableId: !Ref RouteTablePrivate
+      DestinationCidrBlock: '0.0.0.0/0'
+      NatGatewayId: !Ref NatGateway
+
+Outputs:
+  StackName:
+    Description: 'Stack name.'
+    Value: !Sub '${AWS::StackName}'
+  CidrBlock:
+    Description: 'The set of IP addresses for the VPC.'
+    Value: !GetAtt 'VPC.CidrBlock'
+    Export:
+      Name: !Sub '${AWS::StackName}-CidrBlock'
+  VPC:
+    Description: 'VPC.'
+    Value: !Ref VPC
+    Export:
+      Name: !Sub '${AWS::StackName}-VPC'
+  PublicSubnets:
+    Description: 'public subnets'
+    Value: !Join [',', [!Ref PublicSubnet01, !Ref PublicSubnet02, !Ref PublicSubnet03]]
+    Export:
+      Name: !Sub '${AWS::StackName}-public-subnets'
+  PrivateSubnets:
+    Description: 'private subnets'
+    Value: !Join [',', [!Ref PrivateSubnet01, !Ref PrivateSubnet02, !Ref PrivateSubnet03]]
+    Export:
+      Name: !Sub '${AWS::StackName}-private-subnets'
+
+
+

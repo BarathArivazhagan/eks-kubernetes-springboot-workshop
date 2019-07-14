@@ -1,6 +1,6 @@
 
 variable "aws_region" {
-  description = "AWS region to launch servers."
+  description = "AWS region to launch resources."
   default     = "us-east-2"
 }
 
@@ -9,20 +9,13 @@ variable "aws_access_key" {
   default = "" # Not recommended to use access key as it leads to security issues
 }
 
-variable "environment" {
-  default = "demo"
-  description = "environment tag to be associated with the instances"
-}
-
-
 variable "aws_secret_key" {
   description = "AWS secret key to access AWS resources"
   default = "" # Not recommended to use secret key as it leads to security issues
 }
 
-variable "cluster_name" {
-  description = "Name of the EKS cluster. Also used as a prefix in names of related resources."
-  default = "demo-k8s"
+variable "environment" {
+  default = "demo"
 }
 
 variable "cluster_security_group_id" {
@@ -106,8 +99,8 @@ variable "worker_groups" {
 
   default = [
     {
-      "name" = "default"
-    },
+      name = "default"
+    }
   ]
 }
 
@@ -138,8 +131,8 @@ variable "worker_groups_launch_template" {
 
   default = [
     {
-      "name" = "default"
-    },
+      Name = "default"
+    }
   ]
 }
 
@@ -262,26 +255,30 @@ variable "iam_path" {
 
 ### VPC module variables
 
-variable "vpc_name" {
-  description = "name to be associated with the vpc"
-  default = "demo-vpc"
-}
 
 variable "vpc_cidr_block" {
   description = "CIDR to be associated with the vpc"
   default = "10.0.0.0/16"
 }
 
-variable "vpc_private_subnets" {
 
-  type = "list"
-  description = "private subnets to be associated with the vpcs"
-  default = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+variable "subnets" {
+  type = number
 }
 
-variable "vpc_public_subnets" {
+### Common variables
 
-  type = "list"
-  description = "public subnets to be associated with the vpcs"
-  default = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
+variable "stack_name" {
+  default = "demo"
+  description = ""
+}
+
+variable "availability_zones" {
+  type = "map"
+  default = {
+    us-east-1 = ["us-east-1a","us-east-1b","us-east-1c","us-east-1d","us-east-1e","us-east-1f"]
+    us-east-2 = ["us-east-2a","us-east-2b","us-east-2c"]
+    us-west-1 = ["us-west-1a","us-west-1b"]
+    us-west-2 = ["us-west-1a","us-west-2b"]
+  }
 }

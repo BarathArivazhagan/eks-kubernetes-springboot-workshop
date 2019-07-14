@@ -1,0 +1,76 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Deploys IAM roles and policies required for the EKS
+Resources:
+  EKSControlPlaneProvisionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: eksStackPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cloudformation:*
+                  - eks:*
+                  - ec2:*
+                  - s3:*
+                  - lambda:*
+                Resource: "*"
+  EKSControlPlaneRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: eks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+        - arn:aws:iam::aws:policy/AmazonEKSServicePolicy
+  NodeInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: "/"
+      Roles:
+        - !Ref NodeInstanceRole
+  NodeInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+        - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+        - arn:aws:iam::aws:policy/AmazonElasticFileSystemReadOnlyAccess
+
+Outputs:
+  EKSControlPlaneRoleArn:
+    Value: !GetAtt EKSControlPlaneRole.Arn
+  EKSControlPlaneProvisionRoleArn:
+    Value: !GetAtt EKSControlPlaneProvisionRole.Arn
+  NodeInstanceProfile:
+    Value: !Ref NodeInstanceProfile
+  NodeInstanceRoleArn:
+    Value: !GetAtt NodeInstanceRole.Arn
+  NodeInstanceRoleName:
+    Value: !Ref NodeInstanceRole

@@ -1,20 +1,11 @@
-terraform {
-  required_version = ">= 0.11.8 <0.12"
-}
-
 provider "aws" {
   version = ">= 1.47.0"
-  region = "${var.aws_region}"
+  region = var.aws_region
 }
 
-provider "random" {
-  version = "~> 2.1"
-}
 
-data "aws_availability_zones" "available" {}
 
 locals {
-  cluster_name = "${var.cluster_name}-${random_string.suffix.result}"
 
   # the commented out worker group list below shows an example of how to define
   # multiple worker groups of differing configurations
@@ -86,15 +77,11 @@ locals {
   }
 }
 
-resource "random_string" "suffix" {
-  length  = 8
-  special = false
-}
 
 resource "aws_security_group" "worker_group_mgmt_one" {
   name_prefix = "worker_group_mgmt_one"
   description = "SG to be applied to all *nix machines"
-  vpc_id      = "${module.vpc.vpc_id}"
+  vpc_id      = module.vpc.eks_vpc_id
 
   ingress {
     from_port = 22
@@ -109,7 +96,7 @@ resource "aws_security_group" "worker_group_mgmt_one" {
 
 resource "aws_security_group" "worker_group_mgmt_two" {
   name_prefix = "worker_group_mgmt_two"
-  vpc_id      = "${module.vpc.vpc_id}"
+  vpc_id      = module.vpc.eks_vpc_id
 
   ingress {
     from_port = 22
@@ -124,7 +111,7 @@ resource "aws_security_group" "worker_group_mgmt_two" {
 
 resource "aws_security_group" "all_worker_mgmt" {
   name_prefix = "all_worker_management"
-  vpc_id      = "${module.vpc.vpc_id}"
+  vpc_id      = module.vpc.eks_vpc_id
 
   ingress {
     from_port = 22
@@ -141,22 +128,17 @@ resource "aws_security_group" "all_worker_mgmt" {
 
 module "vpc" {
   source             = "./vpc"
-  name               = "${var.vpc_name}"
-  cidr               = "${var.vpc_cidr_block}"
-  azs                = ["${data.aws_availability_zones.available.names[0]}", "${data.aws_availability_zones.available.names[1]}", "${data.aws_availability_zones.available.names[2]}"]
-  private_subnets    = "${var.vpc_private_subnets}"
-  public_subnets     = "${var.vpc_public_subnets}"
-  enable_nat_gateway = true
-  single_nat_gateway = true
-  tags               = "${merge(local.tags, map("kubernetes.io/cluster/${local.cluster_name}", "shared"))}"
+  stack_name         = var.stack_name
+  vpc_cidr_block     = var.vpc_cidr_block
+
 }
 
 module "eks" {
   source                               = "./eks"
-  cluster_name                         = "${local.cluster_name}"
+  cluster_name                         =  var.stack_name
   subnets                              = ["${module.vpc.private_subnets}"]
   tags                                 = "${local.tags}"
-  vpc_id                               = "${module.vpc.vpc_id}"
+  vpc_id                               =  module.vpc.eks_vpc_id
   worker_groups                        = "${local.worker_groups}"
   worker_groups_launch_template        = "${local.worker_groups_launch_template}"
   worker_group_count                   = "1"
