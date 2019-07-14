@@ -3,12 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="4c7a58c9-b76d-42f2-a717-1c8cf1a80688" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/main.tf" beforeDir="false" afterPath="$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/main.tf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/terraform.tfvars" beforeDir="false" afterPath="$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/terraform.tfvars" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/variables.tf" beforeDir="false" afterPath="$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/variables.tf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/versions.tf" beforeDir="false" afterPath="$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/versions.tf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/vpc/main.tf" beforeDir="false" afterPath="$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/vpc/main.tf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/vpc/outputs.tf" beforeDir="false" afterPath="$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/vpc/outputs.tf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/vpc/variables.tf" beforeDir="false" afterPath="$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/vpc/variables.tf" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -75,20 +69,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/variables.tf">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="17" column="17" selection-start-line="17" selection-start-column="17" selection-end-line="17" selection-end-column="17" />
+            <state relative-caret-position="-1706">
+              <caret line="18" column="1" lean-forward="true" selection-start-line="18" selection-start-column="1" selection-end-line="18" selection-end-column="1" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/main.tf">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="75" column="36" selection-start-line="75" selection-start-column="25" selection-end-line="75" selection-end-column="36" />
+            <state relative-caret-position="98">
+              <caret line="69" column="51" selection-start-line="69" selection-start-column="51" selection-end-line="69" selection-end-column="51" />
             </state>
           </provider>
         </entry>
@@ -146,9 +140,9 @@
         <option value="$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/vpc/main.tf" />
         <option value="$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/vpc/outputs.tf" />
         <option value="$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/vpc/variables.tf" />
-        <option value="$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/main.tf" />
         <option value="$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/terraform.tfvars" />
         <option value="$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/variables.tf" />
+        <option value="$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/main.tf" />
       </list>
     </option>
   </component>
@@ -494,13 +488,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/vpc/main.tf">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="870">
-          <caret line="58" column="24" lean-forward="true" selection-start-line="58" selection-start-column="24" selection-end-line="58" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/eks/aws_auth.tf">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -530,17 +517,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/main.tf">
+    <entry file="file://$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/variables.tf">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="75" column="36" selection-start-line="75" selection-start-column="25" selection-end-line="75" selection-end-column="36" />
+        <state relative-caret-position="-1706">
+          <caret line="18" column="1" lean-forward="true" selection-start-line="18" selection-start-column="1" selection-end-line="18" selection-end-column="1" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/variables.tf">
+    <entry file="file://$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/vpc/main.tf">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="17" selection-start-line="17" selection-start-column="17" selection-end-line="17" selection-end-column="17" />
+        <state relative-caret-position="870">
+          <caret line="58" column="24" lean-forward="true" selection-start-line="58" selection-start-column="24" selection-end-line="58" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/eks-terraform-setup/iac_terraform_aws_eks/main.tf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="98">
+          <caret line="69" column="51" selection-start-line="69" selection-start-column="51" selection-end-line="69" selection-end-column="51" />
         </state>
       </provider>
     </entry>

@@ -53,7 +53,7 @@ locals {
   worker_groups = [
     {
       # This will launch an autoscaling group with only On-Demand instances
-      instance_type        = "t2.medium"
+      instance_type        = "t3.micro"
       additional_userdata  = "echo foo bar"
       subnets              = "${module.vpc.private_subnets}"
       asg_desired_capacity = "2"
@@ -62,13 +62,13 @@ locals {
   worker_groups_launch_template = [
     {
       # This will launch an autoscaling group with only Spot Fleet instances
-      instance_type                            = "t2.micro"
+      instance_type                            = "t3.micro"
       additional_userdata                      = "echo foo bar"
       subnets                                  = "${module.vpc.private_subnets}"
       additional_security_group_ids            = "${aws_security_group.worker_group_mgmt_one.id},${aws_security_group.worker_group_mgmt_two.id}"
       override_instance_type                   = "t3.small"
-      asg_desired_capacity                     = "2"
-      spot_instance_pools                      = 10
+      asg_desired_capacity                     = "1"
+      spot_instance_pools                      = 3
       on_demand_percentage_above_base_capacity = "0"
     }
   ]
