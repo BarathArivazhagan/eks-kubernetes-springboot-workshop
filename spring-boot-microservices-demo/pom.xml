@@ -3,12 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.barath.cloud.kubernetes.samples</groupId>
-	<artifactId>spring-cloud-kubernetes-microservices</artifactId>
+	<groupId>com.barath.eks</groupId>
+	<artifactId>spring-boot-eks-microservices</artifactId>
 	<version>1.0.0.RELEASE</version>
 	<packaging>pom</packaging>
 
-	<name>spring-cloud-kubernetes-workshop</name>
+	<name>spring-boot-eks-microservices</name>
 
 
 
@@ -21,8 +21,8 @@
 
 	
 	<modules>
-         <module>bank-microservice</module>
-         <module>customer-microservice</module>
+         <module>bank-service</module>
+         <module>customer-service</module>
          
     </modules>	
 

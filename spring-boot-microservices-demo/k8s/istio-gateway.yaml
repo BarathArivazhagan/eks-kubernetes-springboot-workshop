@@ -30,7 +30,7 @@ spec:
         exact: /banks
     route:
     - destination:
-        host: bank-microservice
+        host: bank-service
         port:
           number: 8081
 ---
@@ -53,6 +53,6 @@ spec:
         exact: /customer/details
     route:
     - destination:
-        host: customer-microservice
+        host: customer-service
         port:
           number: 8082
