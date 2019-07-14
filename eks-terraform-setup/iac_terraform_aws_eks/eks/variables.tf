@@ -95,8 +95,8 @@ variable "worker_groups" {
 
   default = [
     {
-      "name" = "default"
-    },
+      name = "default"
+    }
   ]
 }
 
@@ -127,8 +127,8 @@ variable "worker_groups_launch_template" {
 
   default = [
     {
-      "name" = "default"
-    },
+      name = "default"
+    }
   ]
 }
 
@@ -138,8 +138,8 @@ variable "worker_groups_launch_template_mixed" {
 
   default = [
     {
-      "name" = "default"
-    },
+      name = "default"
+    }
   ]
 }
 
