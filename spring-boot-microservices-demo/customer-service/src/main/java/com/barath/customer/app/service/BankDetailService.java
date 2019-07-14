@@ -14,7 +14,7 @@ public class BankDetailService{
 	
 	private RestTemplate restTemplate;	
 	
-	@Value("${bank.service.name:bank-microservice}")
+	@Value("${bank.service.name:bank-service}")
 	private String bankServiceName;
 
 	public BankDetailService(RestTemplate restTemplate) {
