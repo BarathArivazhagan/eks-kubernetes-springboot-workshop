@@ -34,7 +34,7 @@ resource "aws_security_group_rule" "cluster_egress_internet" {
   count             = "${var.cluster_create_security_group ? 1 : 0}"
   description       = "Allow cluster egress access to the Internet."
   protocol          = "-1"
-  security_group_id = "${aws_security_group.cluster.id}"
+  security_group_id = "${aws_security_group.cluster[count.index].id}"
   cidr_blocks       = ["0.0.0.0/0"]
   from_port         = 0
   to_port           = 0
@@ -64,11 +64,11 @@ resource "aws_iam_role" "cluster" {
 resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSClusterPolicy" {
   count      = "${var.manage_cluster_iam_resources ? 1 : 0}"
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-  role       = "${aws_iam_role.cluster.name}"
+  role       = "${aws_iam_role.cluster[count.index].name}"
 }
 
 resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSServicePolicy" {
   count      = "${var.manage_cluster_iam_resources ? 1 : 0}"
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
-  role       = "${aws_iam_role.cluster.name}"
+  role       = "${aws_iam_role.cluster[count.index].name}"
 }

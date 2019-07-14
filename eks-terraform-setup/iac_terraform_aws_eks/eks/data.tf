@@ -65,7 +65,7 @@ data "template_file" "aws_authenticator_env_variables" {
           value: $${value}
 EOF
 
-  vars {
+  vars = {
     value = "${element(values(var.kubeconfig_aws_authenticator_env_variables), count.index)}"
     key   = "${element(keys(var.kubeconfig_aws_authenticator_env_variables), count.index)}"
   }
@@ -75,7 +75,7 @@ data "template_file" "userdata" {
   count    = "${var.worker_group_count}"
   template = "${file("${path.module}/templates/userdata.sh.tpl")}"
 
-  vars {
+  vars = {
     cluster_name         = "${aws_eks_cluster.this.name}"
     endpoint             = "${aws_eks_cluster.this.endpoint}"
     cluster_auth_base64  = "${aws_eks_cluster.this.certificate_authority.0.data}"
@@ -90,7 +90,7 @@ data "template_file" "launch_template_userdata" {
   count    = "${var.worker_group_launch_template_count}"
   template = "${file("${path.module}/templates/userdata.sh.tpl")}"
 
-  vars {
+  vars = {
     cluster_name         = "${aws_eks_cluster.this.name}"
     endpoint             = "${aws_eks_cluster.this.endpoint}"
     cluster_auth_base64  = "${aws_eks_cluster.this.certificate_authority.0.data}"
@@ -105,7 +105,7 @@ data "template_file" "workers_launch_template_mixed" {
   count    = "${var.worker_group_launch_template_mixed_count}"
   template = "${file("${path.module}/templates/userdata.sh.tpl")}"
 
-  vars {
+  vars = {
     cluster_name         = "${aws_eks_cluster.this.name}"
     endpoint             = "${aws_eks_cluster.this.endpoint}"
     cluster_auth_base64  = "${aws_eks_cluster.this.certificate_authority.0.data}"
