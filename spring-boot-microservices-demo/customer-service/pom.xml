@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.barath.microservices.kubernetes</groupId>
-	<artifactId>customer-microservice</artifactId>
+	<artifactId>customer-service</artifactId>
 	<version>1.0.0.RELEASE</version>
 	<packaging>jar</packaging>
 
-	<name>customer microservice</name>
+	<name>customer service</name>
 	<description> customer microservice deployed in kubernetes</description>
 
 	<parent>

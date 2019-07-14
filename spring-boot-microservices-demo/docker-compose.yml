@@ -1,11 +1,13 @@
 version: '3.7'
 services:
   bank-service:
-    build: ./bank-microservice
+    build: ./bank-service
+    image: barathece91/bank-service-eks-k8s
     ports:
       - "8081:8081"
   customer-service:
-    build: ./customer-microservice
+    build: ./customer-service
+    image: barathece91/customer-service-eks-k8s
     ports:
       - "8082:8082"
 

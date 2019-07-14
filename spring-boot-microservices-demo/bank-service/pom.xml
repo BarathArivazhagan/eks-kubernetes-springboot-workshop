@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.barath.microservices.kubernetes</groupId>
-	<artifactId>bank-microservice</artifactId>
+	<artifactId>bank-service</artifactId>
 	<version>1.0.0.RELEASE</version>
 	<packaging>jar</packaging>
 
-	<name>bank microservice</name>
+	<name>bank service</name>
 	<description> bank microservice deployed in kubernetes</description>
 
 	<parent>

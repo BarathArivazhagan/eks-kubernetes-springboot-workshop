@@ -3,48 +3,47 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bank-microservice
+  name: bank-service
 spec:
   selector:
     matchLabels:
-      app: bank-microservice
+      app: bank-service
   replicas: 1
   template:
     metadata:
       labels:
-        app: bank-microservice
+        app: bank-service
     spec:
       containers:
-      - name: bank-microservice
-        image: barathece91/bank-microservice
+      - name: bank-service
+        image: barathece91/bank-service-eks-k8s
         ports:
         - containerPort: 8081
-      
-   
+
 ---
 # deployment config for customer service
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: customer-microservice
+  name: customer-service
 spec:
   selector:
     matchLabels:
-      app: customer-microservice
+      app: customer-service
   replicas: 1
   template:
     metadata:
       labels:
-        app: customer-microservice
+        app: customer-service
     spec:
       containers:   
-      - name: customer-microservice
-        image: barathece91/customer-microservice
+      - name: customer-service
+        image: barathece91/customer-service-eks-k8s
         ports:
         - containerPort: 8082
         env:
         - name: bank.service.name
-          value: http://bank-microservice:8081
+          value: http://bank-service:8081
 
  
 
@@ -53,10 +52,10 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: bank-microservice
+  name: bank-service
 spec:
   selector:
-    app: bank-microservice
+    app: bank-service
   type: ClusterIP
   ports:
   - protocol: TCP
@@ -66,10 +65,10 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: customer-microservice
+  name: customer-service
 spec:
   selector:
-    app: customer-microservice
+    app: customer-service
   type: ClusterIP
   ports:
   - protocol: TCP
