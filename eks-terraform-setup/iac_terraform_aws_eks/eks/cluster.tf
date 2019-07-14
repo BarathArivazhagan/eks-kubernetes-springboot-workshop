@@ -1,7 +1,7 @@
 resource "aws_eks_cluster" "this" {
   name                      = "${var.cluster_name}"
   enabled_cluster_log_types = "${var.cluster_enabled_log_types}"
-  role_arn                  = "${aws_iam_role.cluster.*.arn}"
+  role_arn                  =  aws_iam_role.cluster.arn
   version                   = "${var.cluster_version}"
 
   vpc_config {
@@ -53,7 +53,6 @@ resource "aws_security_group_rule" "cluster_https_worker_ingress" {
 }
 
 resource "aws_iam_role" "cluster" {
-  count                 = "${var.manage_cluster_iam_resources ? 1 : 0}"
   name_prefix           = "${var.cluster_name}"
   assume_role_policy    = "${data.aws_iam_policy_document.cluster_assume_role_policy.json}"
   permissions_boundary  = "${var.permissions_boundary}"

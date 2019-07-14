@@ -40,7 +40,7 @@ resource "aws_autoscaling_group" "workers_launch_template" {
   //enabled_metrics       = ["${compact(split(",", coalesce(lookup(var.worker_groups_launch_template[count.index], "enabled_metrics", ""), local.workers_group_launch_template_defaults["enabled_metrics"])))}"]
   count                 = "${var.worker_group_launch_template_count}"
 
-  tags = ["${concat(
+  tags = concat(
     list(
       map("key", "Name", "value", "${aws_eks_cluster.this.name}-${lookup(var.worker_groups_launch_template[count.index], "name", count.index)}-eks_asg", "propagate_at_launch", true),
       map("key", "kubernetes.io/cluster/${aws_eks_cluster.this.name}", "value", "owned", "propagate_at_launch", true),
@@ -50,7 +50,7 @@ resource "aws_autoscaling_group" "workers_launch_template" {
     ),
     local.asg_tags,
     var.worker_group_launch_template_tags[contains(keys(var.worker_group_launch_template_tags), "${lookup(var.worker_groups_launch_template[count.index], "name", count.index)}") ? "${lookup(var.worker_groups_launch_template[count.index], "name", count.index)}" : "default"])
-  }"]
+
 
   lifecycle {
     create_before_destroy = true

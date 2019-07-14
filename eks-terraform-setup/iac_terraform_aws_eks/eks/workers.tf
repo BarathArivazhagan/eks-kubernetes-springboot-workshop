@@ -15,7 +15,7 @@ resource "aws_autoscaling_group" "workers" {
   count                 = "${var.worker_group_count}"
   placement_group       = "${lookup(var.worker_groups[count.index], "placement_group", local.workers_group_defaults["placement_group"])}"
 
-  tags = ["${concat(
+  tags = concat(
     list(
       map("key", "Name", "value", "${aws_eks_cluster.this.name}-${lookup(var.worker_groups[count.index], "name", count.index)}-eks_asg", "propagate_at_launch", true),
       map("key", "kubernetes.io/cluster/${aws_eks_cluster.this.name}", "value", "owned", "propagate_at_launch", true),
@@ -25,7 +25,7 @@ resource "aws_autoscaling_group" "workers" {
     ),
     local.asg_tags,
     var.worker_group_tags[contains(keys(var.worker_group_tags), "${lookup(var.worker_groups[count.index], "name", count.index)}") ? "${lookup(var.worker_groups[count.index], "name", count.index)}" : "default"])
-  }"]
+
 
   lifecycle {
     create_before_destroy = true
