@@ -136,7 +136,7 @@ module "vpc" {
 
 module "eks" {
   source                               = "./eks"
-  cluster_name                         =  var.stack_name
+  cluster_name                         =  join("-",[var.stack_name,"eks"])
   subnets                              =  module.vpc.private_subnets
   tags                                 = "${local.tags}"
   vpc_id                               =  module.vpc.eks_vpc_id

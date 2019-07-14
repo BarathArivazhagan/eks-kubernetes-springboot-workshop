@@ -10,7 +10,7 @@ resource "aws_vpc" "eks_vpc" {
   enable_dns_hostnames = true
   enable_dns_support = true
   tags = {
-    Name = "var.stack_name-vpc"
+    Name = join("-",[var.stack_name,"vpc"])
   }
 }
 
