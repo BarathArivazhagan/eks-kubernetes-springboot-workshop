@@ -129,6 +129,7 @@ resource "aws_security_group" "all_worker_mgmt" {
 module "vpc" {
   source             = "./vpc"
   stack_name         = var.stack_name
+  subnets            = var.subnets
   vpc_cidr_block     = var.vpc_cidr_block
 
 }
