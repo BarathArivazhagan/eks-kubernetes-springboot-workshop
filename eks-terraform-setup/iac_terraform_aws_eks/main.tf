@@ -137,7 +137,7 @@ module "vpc" {
 module "eks" {
   source                               = "./eks"
   cluster_name                         =  var.stack_name
-  subnets                              = ["${module.vpc.private_subnets}"]
+  subnets                              =  module.vpc.private_subnets
   tags                                 = "${local.tags}"
   vpc_id                               =  module.vpc.eks_vpc_id
   worker_groups                        = "${local.worker_groups}"

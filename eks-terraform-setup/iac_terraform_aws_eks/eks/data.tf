@@ -45,7 +45,7 @@ data "aws_iam_policy_document" "cluster_assume_role_policy" {
 data "template_file" "kubeconfig" {
   template = "${file("${path.module}/templates/kubeconfig.tpl")}"
 
-  vars {
+  vars = {
     kubeconfig_name                   = "${local.kubeconfig_name}"
     endpoint                          = "${aws_eks_cluster.this.endpoint}"
     region                            = "${data.aws_region.current.name}"
