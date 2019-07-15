@@ -18,7 +18,20 @@ spec:
       - name: bank-service
         image: barathece91/bank-service-eks-k8s
         ports:
-        - containerPort: 8081
+          - containerPort: 8081
+        env:
+          - name: AWS_XRAY_TRACING_NAME
+            value: bank-service
+          - name: AWS_XRAY_DAEMON_ADDRESS
+            value: xray-service.default.svc.cluster.local:2000
+        resources:
+              requests:
+                memory: "1Gi"
+                cpu: "250m"
+              limits:
+                memory: "2Gi"
+                cpu: "500m"
+            
 
 ---
 # deployment config for customer service
@@ -43,11 +56,14 @@ spec:
         - containerPort: 8082
         env:
         - name: bank.service.name
-          value: http://bank-service:8081
-
- 
-
-
+          value: http://bank-service.default.svc.cluster.local:8081
+        resources:
+              requests:
+                memory: "1Gi"
+                cpu: "250m"
+              limits:
+                memory: "2Gi"
+                cpu: "500m"
 ---
 kind: Service
 apiVersion: v1
