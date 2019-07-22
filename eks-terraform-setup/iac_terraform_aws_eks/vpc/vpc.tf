@@ -9,7 +9,7 @@ resource "aws_vpc" "eks_vpc" {
   enable_dns_hostnames = true
   enable_dns_support = true
   tags = {
-    Name = join("-",[var.stack_name,"vpc"])
+    Name = join("-",[var.stack_name,"eks-vpc"])
   }
 }
 
@@ -23,7 +23,7 @@ resource "aws_subnet" "private_subnets" {
   availability_zone = data.aws_availability_zones.azs.names[count.index]
   map_public_ip_on_launch = "false"
   tags = {
-    Name = join("-",[var.stack_name,"private-subnet",data.aws_availability_zones.azs.names[count.index]])
+    Name = join("-",[var.stack_name,"eks-private-subnet",data.aws_availability_zones.azs.names[count.index]])
   }
 }
 
@@ -35,7 +35,7 @@ resource "aws_subnet" "public_subnets" {
   availability_zone = data.aws_availability_zones.azs.names[count.index]
   map_public_ip_on_launch = "true"
   tags = {
-    Name = join("-",[var.stack_name,"public-subnet",data.aws_availability_zones.azs.names[count.index]])
+    Name = join("-",[var.stack_name,"eks-public-subnet",data.aws_availability_zones.azs.names[count.index]])
   }
 }
 
@@ -43,7 +43,7 @@ resource "aws_subnet" "public_subnets" {
 resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.eks_vpc.id
   tags = {
-    Name = "${var.stack_name}-internet-gateway"
+    Name = "${var.stack_name}-eks-internet-gateway"
   }
 }
 
@@ -51,7 +51,7 @@ resource "aws_nat_gateway" "nat_gateway" {
   subnet_id     = aws_subnet.public_subnets[0].id
   allocation_id = aws_eip.nat_gateway_eip.id
   tags = {
-    Name = "${var.stack_name}-nat-gateway"
+    Name = "${var.stack_name}-eks-nat-gateway"
   }
 }
 
@@ -69,7 +69,7 @@ resource "aws_route_table" "public_route_table" {
   }
 
   tags = {
-    Name = "${var.stack_name}-public-route-table"
+    Name = "${var.stack_name}-eks-public-route-table"
   }
 
 }
@@ -83,7 +83,7 @@ resource "aws_route_table" "private_route_table" {
   }
 
   tags = {
-    Name = "${var.stack_name}-private-route-table"
+    Name = "${var.stack_name}-eks-private-route-table"
   }
 
 }

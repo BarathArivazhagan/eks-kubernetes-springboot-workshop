@@ -1,9 +1,9 @@
 
 resource "aws_iam_role" "eks_cluster_role" {
-  name_prefix           = "${var.cluster_name}"
-  assume_role_policy    = "${data.aws_iam_policy_document.cluster_assume_role_policy.json}"
-  permissions_boundary  = "${var.permissions_boundary}"
-  path                  = "${var.iam_path}"
+  name_prefix           = var.cluster_name
+  assume_role_policy    = data.aws_iam_policy_document.cluster_assume_role_policy.json
+  permissions_boundary  = var.permissions_boundary
+  path                  = var.iam_path
   force_detach_policies = true
 }
 
@@ -22,7 +22,7 @@ resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSServicePolicy" {
 resource "aws_eks_cluster" "eks_cluster" {
   name                      = var.cluster_name
   enabled_cluster_log_types = var.cluster_enabled_log_types
-  role_arn                  =  aws_iam_role.eks_cluster_role.arn
+  role_arn                  = aws_iam_role.eks_cluster_role.arn
   version                   = var.cluster_version
 
   vpc_config {
@@ -48,7 +48,7 @@ resource "aws_security_group" "cluster_security_group" {
   name_prefix =  var.cluster_name
   description = "EKS cluster security group."
   vpc_id      =  var.vpc_id
-  tags        =  merge(var.tags, map("Name", "${var.cluster_name}-eks_cluster_sg"))
+  tags        =  merge(var.tags, map("Name", "${var.cluster_name}-eks-cluster-sg"))
 }
 
 resource "aws_security_group_rule" "cluster_egress_internet" {
