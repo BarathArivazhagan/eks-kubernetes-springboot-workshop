@@ -3,7 +3,7 @@ locals {
 
   # Followed recommendation http://67bricks.com/blog/?p=85
   # to workaround terraform not supporting short circut evaluation
-  cluster_security_group_id = "${coalesce(join("", aws_security_group.cluster.*.id), var.cluster_security_group_id)}"
+  cluster_security_group_id = "${coalesce(join("", aws_security_group.cluster_security_group.*.id), var.cluster_security_group_id)}"
 
   worker_security_group_id = "${coalesce(join("", aws_security_group.workers.*.id), var.worker_security_group_id)}"
   default_iam_role_id      = "${element(concat(aws_iam_role.workers.*.id, list("")), 0)}"

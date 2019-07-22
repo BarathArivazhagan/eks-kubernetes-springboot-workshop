@@ -1,7 +1,7 @@
 # Worker Groups using Launch Configurations
 
 resource "aws_autoscaling_group" "workers" {
-  name_prefix           = "${aws_eks_cluster.this.name}-${lookup(var.worker_groups[count.index], "name", count.index)}"
+  name_prefix           = "${aws_eks_cluster.eks_cluster.name}-${lookup(var.worker_groups[count.index], "name", count.index)}"
   desired_capacity      = "${lookup(var.worker_groups[count.index], "asg_desired_capacity", local.workers_group_defaults["asg_desired_capacity"])}"
   max_size              = "${lookup(var.worker_groups[count.index], "asg_max_size", local.workers_group_defaults["asg_max_size"])}"
   min_size              = "${lookup(var.worker_groups[count.index], "asg_min_size", local.workers_group_defaults["asg_min_size"])}"
@@ -24,7 +24,7 @@ resource "aws_autoscaling_group" "workers" {
 }
 
 resource "aws_launch_configuration" "workers" {
-  name_prefix                 = "${aws_eks_cluster.this.name}-${lookup(var.worker_groups[count.index], "name", count.index)}"
+  name_prefix                 = "${aws_eks_cluster.eks_cluster.name}-${lookup(var.worker_groups[count.index], "name", count.index)}"
   associate_public_ip_address = "${lookup(var.worker_groups[count.index], "public_ip", local.workers_group_defaults["public_ip"])}"
   security_groups             = ["${local.worker_security_group_id}"]
   iam_instance_profile        = "${element(aws_iam_instance_profile.workers.*.id, count.index)}"
@@ -50,8 +50,8 @@ resource "aws_launch_configuration" "workers" {
   }
 }
 
-resource "aws_security_group" "workers" {
-  name_prefix = "${aws_eks_cluster.this.name}"
+resource "aws_security_group" "workers_security_group" {
+  name_prefix = "${aws_eks_cluster.eks_cluster.name}"
   description = "Security group for all nodes in the cluster."
   vpc_id      = "${var.vpc_id}"
   count       = "${var.worker_create_security_group ? 1 : 0}"
@@ -59,10 +59,10 @@ resource "aws_security_group" "workers" {
   ))}"
 }
 
-resource "aws_security_group_rule" "workers_egress_internet" {
+resource "aws_security_group_rule" "workers_sg_egress_internet" {
   description       = "Allow nodes all egress to the Internet."
   protocol          = "-1"
-  security_group_id = "${aws_security_group.workers[count.index].id}"
+  security_group_id = aws_security_group.workers_security_group[count.index].id
   cidr_blocks       = ["0.0.0.0/0"]
   from_port         = 0
   to_port           = 0
@@ -70,73 +70,73 @@ resource "aws_security_group_rule" "workers_egress_internet" {
   count             = "${var.worker_create_security_group ? 1 : 0}"
 }
 
-resource "aws_security_group_rule" "workers_ingress_self" {
+resource "aws_security_group_rule" "workers_sg_ingress_self" {
   description              = "Allow node to communicate with each other."
   protocol                 = "-1"
-  security_group_id        = "${aws_security_group.workers[count.index].id}"
-  source_security_group_id = "${aws_security_group.workers[count.index].id}"
+  security_group_id        = aws_security_group.workers_security_group[count.index].id
+  source_security_group_id = aws_security_group.workers_security_group[count.index].id
   from_port                = 0
   to_port                  = 65535
   type                     = "ingress"
   count                    = "${var.worker_create_security_group ? 1 : 0}"
 }
 
-resource "aws_security_group_rule" "workers_ingress_cluster" {
+resource "aws_security_group_rule" "workers_sg_ingress_cluster" {
   description              = "Allow workers Kubelets and pods to receive communication from the cluster control plane."
   protocol                 = "tcp"
-  security_group_id        = "${aws_security_group.workers[count.index].id}"
-  source_security_group_id = "${local.cluster_security_group_id}"
-  from_port                = "${var.worker_sg_ingress_from_port}"
+  security_group_id        = aws_security_group.workers_security_group[count.index].id
+  source_security_group_id = local.cluster_security_group_id
+  from_port                = var.worker_sg_ingress_from_port
   to_port                  = 65535
   type                     = "ingress"
   count                    = "${var.worker_create_security_group ? 1 : 0}"
 }
 
-resource "aws_security_group_rule" "workers_ingress_cluster_https" {
+resource "aws_security_group_rule" "workers_sg_ingress_cluster_https" {
   description              = "Allow pods running extension API servers on port 443 to receive communication from cluster control plane."
   protocol                 = "tcp"
-  security_group_id        = "${aws_security_group.workers[count.index].id}"
-  source_security_group_id = "${local.cluster_security_group_id}"
+  security_group_id        = aws_security_group.workers_security_group[count.index].id
+  source_security_group_id = local.cluster_security_group_id
   from_port                = 443
   to_port                  = 443
   type                     = "ingress"
-  count                    = "${var.worker_create_security_group ? 1 : 0}"
+  count                    = var.worker_create_security_group ? 1 : 0
 }
 
 resource "aws_iam_role" "workers" {
-  name_prefix           = "${aws_eks_cluster.this.name}"
-  assume_role_policy    = "${data.aws_iam_policy_document.workers_assume_role_policy.json}"
-  permissions_boundary  = "${var.permissions_boundary}"
-  path                  = "${var.iam_path}"
+  name_prefix           = aws_eks_cluster.eks_cluster.name
+  assume_role_policy    = data.aws_iam_policy_document.workers_assume_role_policy.json
+  permissions_boundary  = var.permissions_boundary
+  path                  = var.iam_path
   force_detach_policies = true
 }
 
 resource "aws_iam_instance_profile" "workers" {
-  name_prefix = "${aws_eks_cluster.this.name}"
-  role        = "${lookup(var.worker_groups[count.index], "iam_role_id",  lookup(local.workers_group_defaults, "iam_role_id"))}"
-  count       = "${var.worker_group_count}"
-  path        = "${var.iam_path}"
+  name_prefix = aws_eks_cluster.eks_cluster.name
+  role        = lookup(var.worker_groups[count.index], "iam_role_id",  lookup(local.workers_group_defaults, "iam_role_id"))
+  count       = var.worker_group_count
+  path        = var.iam_path
 }
 
 resource "aws_iam_role_policy_attachment" "workers_AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-  role       = "${aws_iam_role.workers.name}"
+  role       = aws_iam_role.workers.name
 }
 
 resource "aws_iam_role_policy_attachment" "workers_AmazonEKS_CNI_Policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role       = "${aws_iam_role.workers.name}"
+  role       = aws_iam_role.workers.name
 }
 
 resource "aws_iam_role_policy_attachment" "workers_AmazonEC2ContainerRegistryReadOnly" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-  role       = "${aws_iam_role.workers.name}"
+  role       = aws_iam_role.workers.name
 }
 
 resource "aws_iam_role_policy_attachment" "workers_additional_policies" {
-  count      = "${var.workers_additional_policies_count}"
-  role       = "${aws_iam_role.workers.name}"
-  policy_arn = "${var.workers_additional_policies[count.index]}"
+  count      = var.workers_additional_policies_count
+  role       = aws_iam_role.workers.name
+  policy_arn = var.workers_additional_policies[count.index]
 }
 
 resource "null_resource" "tags_as_list_of_maps" {
@@ -155,8 +155,8 @@ resource "aws_iam_role_policy_attachment" "workers_autoscaling" {
 }
 
 resource "aws_iam_policy" "worker_autoscaling" {
-  name_prefix = "eks-worker-autoscaling-${aws_eks_cluster.this.name}"
-  description = "EKS worker node autoscaling policy for cluster ${aws_eks_cluster.this.name}"
+  name_prefix = "eks-worker-autoscaling-${aws_eks_cluster.eks_cluster.name}"
+  description = "EKS worker node autoscaling policy for cluster ${aws_eks_cluster.eks_cluster.name}"
   policy      = "${data.aws_iam_policy_document.worker_autoscaling.json}"
   path        = "${var.iam_path}"
 }
@@ -191,7 +191,7 @@ data "aws_iam_policy_document" "worker_autoscaling" {
 
     condition {
       test     = "StringEquals"
-      variable = "autoscaling:ResourceTag/kubernetes.io/cluster/${aws_eks_cluster.this.name}"
+      variable = "autoscaling:ResourceTag/kubernetes.io/cluster/${aws_eks_cluster.eks_cluster.name}"
       values   = ["owned"]
     }
 

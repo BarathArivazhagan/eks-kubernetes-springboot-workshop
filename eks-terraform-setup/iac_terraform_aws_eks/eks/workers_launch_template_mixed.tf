@@ -2,7 +2,7 @@
 
 resource "aws_autoscaling_group" "workers_launch_template_mixed" {
   count                   =  var.worker_group_launch_template_mixed_count
-  name_prefix             = "${aws_eks_cluster.this.name}-${lookup(var.worker_groups_launch_template_mixed[count.index], "name", count.index)}"
+  name_prefix             = "${aws_eks_cluster.eks_cluster.name}-${lookup(var.worker_groups_launch_template_mixed[count.index], "name", count.index)}"
   desired_capacity        = "${lookup(var.worker_groups_launch_template_mixed[count.index], "asg_desired_capacity", local.workers_group_defaults["asg_desired_capacity"])}"
   max_size                = "${lookup(var.worker_groups_launch_template_mixed[count.index], "asg_max_size", local.workers_group_defaults["asg_max_size"])}"
   min_size                = "${lookup(var.worker_groups_launch_template_mixed[count.index], "asg_min_size", local.workers_group_defaults["asg_min_size"])}"
@@ -51,10 +51,10 @@ resource "aws_autoscaling_group" "workers_launch_template_mixed" {
 
   tags = ["${concat(
     list(
-      map("key", "Name", "value", "${aws_eks_cluster.this.name}-${lookup(var.worker_groups_launch_template_mixed[count.index], "name", count.index)}-eks_asg", "propagate_at_launch", true),
-      map("key", "kubernetes.io/cluster/${aws_eks_cluster.this.name}", "value", "owned", "propagate_at_launch", true),
+      map("key", "Name", "value", "${aws_eks_cluster.eks_cluster.name}-${lookup(var.worker_groups_launch_template_mixed[count.index], "name", count.index)}-eks_asg", "propagate_at_launch", true),
+      map("key", "kubernetes.io/cluster/${aws_eks_cluster.eks_cluster.name}", "value", "owned", "propagate_at_launch", true),
       map("key", "k8s.io/cluster-autoscaler/${lookup(var.worker_groups_launch_template_mixed[count.index], "autoscaling_enabled", local.workers_group_defaults["autoscaling_enabled"]) == 1 ? "enabled" : "disabled"  }", "value", "true", "propagate_at_launch", false),
-      map("key", "k8s.io/cluster-autoscaler/${aws_eks_cluster.this.name}", "value", "", "propagate_at_launch", false),
+      map("key", "k8s.io/cluster-autoscaler/${aws_eks_cluster.eks_cluster.name}", "value", "", "propagate_at_launch", false),
       map("key", "k8s.io/cluster-autoscaler/node-template/resources/ephemeral-storage", "value", "${lookup(var.worker_groups_launch_template_mixed[count.index], "root_volume_size", local.workers_group_defaults["root_volume_size"])}Gi", "propagate_at_launch", false)
     ),
     local.asg_tags,
@@ -69,7 +69,7 @@ resource "aws_autoscaling_group" "workers_launch_template_mixed" {
 
 resource "aws_launch_template" "workers_launch_template_mixed" {
   count       = "${var.worker_group_launch_template_mixed_count}"
-  name_prefix = "${aws_eks_cluster.this.name}-${lookup(var.worker_groups_launch_template_mixed[count.index], "name", count.index)}"
+  name_prefix = "${aws_eks_cluster.eks_cluster.name}-${lookup(var.worker_groups_launch_template_mixed[count.index], "name", count.index)}"
 
   network_interfaces {
     associate_public_ip_address = "${lookup(var.worker_groups_launch_template_mixed[count.index], "public_ip", local.workers_group_defaults["public_ip"])}"
@@ -115,8 +115,8 @@ resource "aws_launch_template" "workers_launch_template_mixed" {
 }
 
 resource "aws_iam_instance_profile" "workers_launch_template_mixed" {
-  count       = "${var.manage_worker_iam_resources ? var.worker_group_launch_template_mixed_count : 0}"
-  name_prefix = "${aws_eks_cluster.this.name}"
-  role        = "${lookup(var.worker_groups_launch_template_mixed[count.index], "iam_role_id",  lookup(local.workers_group_defaults, "iam_role_id"))}"
-  path        = "${var.iam_path}"
+  count       = var.manage_worker_iam_resources ? var.worker_group_launch_template_mixed_count : 0
+  name_prefix = aws_eks_cluster.eks_cluster.name
+  role        = lookup(var.worker_groups_launch_template_mixed[count.index], "iam_role_id",  lookup(local.workers_group_defaults, "iam_role_id"))
+  path        = var.iam_path
 }

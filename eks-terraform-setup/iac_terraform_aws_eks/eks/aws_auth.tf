@@ -27,7 +27,7 @@ EOS
   triggers = {
     kube_config_map_rendered = "${data.template_file.kubeconfig.rendered}"
     config_map_rendered      = "${data.template_file.config_map_aws_auth.rendered}"
-    endpoint                 = "${aws_eks_cluster.this.endpoint}"
+    endpoint                 = "${aws_eks_cluster.eks_cluster.endpoint}"
   }
 }
 
