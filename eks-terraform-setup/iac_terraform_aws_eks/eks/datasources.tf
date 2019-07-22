@@ -85,6 +85,7 @@ data "template_file" "userdata" {
     additional_userdata  = lookup(var.worker_groups[count.index], "additional_userdata", local.workers_group_defaults["additional_userdata"])
     bootstrap_extra_args = lookup(var.worker_groups[count.index], "bootstrap_extra_args", local.workers_group_defaults["bootstrap_extra_args"])
     kubelet_extra_args   = lookup(var.worker_groups[count.index], "kubelet_extra_args", local.workers_group_defaults["kubelet_extra_args"])
+    enable_docker_bridge = lookup(var.worker_groups[count.index], "enable_docker_bridge", local.workers_group_defaults["enable_docker_bridge"])
   }
 }
 
@@ -100,6 +101,7 @@ data "template_file" "launch_template_userdata" {
     additional_userdata  = lookup(var.worker_groups_launch_template[count.index], "additional_userdata", local.workers_group_defaults["additional_userdata"])
     bootstrap_extra_args = lookup(var.worker_groups_launch_template[count.index], "bootstrap_extra_args", local.workers_group_defaults["bootstrap_extra_args"])
     kubelet_extra_args   = lookup(var.worker_groups_launch_template[count.index], "kubelet_extra_args", local.workers_group_defaults["kubelet_extra_args"])
+    enable_docker_bridge = lookup(var.worker_groups[count.index], "enable_docker_bridge", local.workers_group_defaults["enable_docker_bridge"])
   }
 }
 
