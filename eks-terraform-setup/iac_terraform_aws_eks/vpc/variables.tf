@@ -12,12 +12,13 @@ variable "vpc_cidr_block" {
 
 variable "subnets" {
   type = number
+  default = 3
 }
 
 
 variable "stack_name" {
   default = "demo"
-  description = ""
+  description = "Name of the stack to be associated with all the terraform resources"
 }
 
 
