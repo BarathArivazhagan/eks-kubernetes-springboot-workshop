@@ -26,6 +26,7 @@ locals {
     pre_userdata                  = ""                              # userdata to pre-append to the default userdata.
     enable_docker_bridge          = "false"                         # --enable-docker-bridge bootstrap.sh arg
     additional_userdata           = ""                              # userdata to append to the default userdata.
+    bootstrap_extra_args          = ""                              # Extra arguments passed to the bootstrap.sh script from the EKS AMI.
     ebs_optimized                 = true                            # sets whether to use ebs optimization on supported types.
     enable_monitoring             = true                            # Enables/disables detailed monitoring.
     public_ip                     = false                           # Associate a public ip address with a worker
