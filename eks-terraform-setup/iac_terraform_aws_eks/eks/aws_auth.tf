@@ -87,7 +87,7 @@ data "template_file" "map_roles" {
   template = file("${path.module}/templates/config-map-aws-auth-map_roles.yaml.tpl")
 
   vars = {
-    role_arn = eks_clusterlookup(var.map_roles[count.index], "role_arn")
+    role_arn = lookup(var.map_roles[count.index], "role_arn")
     username = lookup(var.map_roles[count.index], "username")
     group    = lookup(var.map_roles[count.index], "group")
   }

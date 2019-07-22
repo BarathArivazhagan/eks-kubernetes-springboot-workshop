@@ -4,10 +4,21 @@ variable "aws_region" {
   default     = "us-east-2"
 }
 
-variable "cluster_enabled_log_types" {
-  default     = []
-  description = "A list of the desired control plane logging to enable. For more information, see Amazon EKS Control Plane Logging documentation (https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html)"
-  type        = "list"
+
+
+variable "cluster_endpoint_private_access" {
+  description = "Indicates whether or not the Amazon EKS private API server endpoint is enabled."
+  default     = false
+}
+
+variable "private_subnets" {
+  description = "A list of subnets to place the EKS cluster and workers within."
+  type        = list(string)
+}
+
+variable "public_subnets" {
+  description = "A list of subnets to place the EKS cluster and workers within."
+  type        = list(string)
 }
 
 
@@ -15,6 +26,8 @@ variable "cluster_enabled_log_types" {
 variable "cluster_name" {
   description = "Name of the EKS cluster. Also used as a prefix in names of related resources."
 }
+
+
 
 variable "cluster_security_group_id" {
   description = "If provided, the EKS cluster will be attached to this security group. If not given, a security group will be created with necessary ingres/egress to work with the workers and provide API access to your current IP/32."
@@ -24,6 +37,12 @@ variable "cluster_security_group_id" {
 variable "cluster_version" {
   description = "Kubernetes version to use for the EKS cluster."
   default     = "1.13"
+}
+
+variable "cluster_enabled_log_types" {
+  default     = []
+  description = "A list of the desired control plane logging to enable. For more information, see Amazon EKS Control Plane Logging documentation (https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html)"
+  type        = "list"
 }
 
 variable "config_output_path" {
@@ -82,10 +101,7 @@ variable "map_users_count" {
   default     = 0
 }
 
-variable "subnets" {
-  description = "A list of subnets to place the EKS cluster and workers within."
-  type        = "list"
-}
+
 
 variable "tags" {
   description = "A map of tags to add to all resources."
@@ -256,11 +272,6 @@ variable "permissions_boundary" {
 variable "iam_path" {
   description = "If provided, all IAM roles will be created on this path."
   default     = "/"
-}
-
-variable "cluster_endpoint_private_access" {
-  description = "Indicates whether or not the Amazon EKS private API server endpoint is enabled."
-  default     = false
 }
 
 variable "worker_group_launch_template_tags" {

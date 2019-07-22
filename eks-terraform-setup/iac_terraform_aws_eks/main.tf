@@ -47,7 +47,8 @@ module "eks" {
   aws_region                           = var.aws_region
   cluster_name                         = join("-",[var.stack_name,"eks"])
   cluster_version                      = var.cluster_version
-  subnets                              = module.vpc.private_subnets
+  private_subnets                      = module.vpc.private_subnets
+  public_subnets                       = module.vpc.public_subnets
   tags                                 = local.tags
   vpc_id                               = module.vpc.eks_vpc_id
   worker_groups                        = local.worker_groups

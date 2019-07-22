@@ -34,7 +34,7 @@ resource "aws_autoscaling_group" "workers_launch_template" {
     }
   }
 
-  //vpc_zone_identifier   = ["${split(",", coalesce(lookup(var.worker_groups_launch_template[count.index], "subnets", ""), local.workers_group_launch_template_defaults["subnets"]))}"]
+  vpc_zone_identifier   = ["${split(",", coalesce(lookup(var.worker_groups_launch_template[count.index], "subnets", ""), local.workers_group_launch_template_defaults["subnets"]))}"]
   protect_from_scale_in = "${lookup(var.worker_groups_launch_template[count.index], "protect_from_scale_in", local.workers_group_launch_template_defaults["protect_from_scale_in"])}"
   //suspended_processes   = ["${compact(split(",", coalesce(lookup(var.worker_groups_launch_template[count.index], "suspended_processes", ""), local.workers_group_launch_template_defaults["suspended_processes"])))}"]
   //enabled_metrics       = ["${compact(split(",", coalesce(lookup(var.worker_groups_launch_template[count.index], "enabled_metrics", ""), local.workers_group_launch_template_defaults["enabled_metrics"])))}"]
@@ -66,21 +66,21 @@ resource "aws_launch_template" "workers_launch_template" {
   ebs_optimized = "${lookup(var.worker_groups_launch_template[count.index], "ebs_optimized", lookup(local.ebs_optimized, lookup(var.worker_groups_launch_template[count.index], "instance_type", local.workers_group_launch_template_defaults["instance_type"]), false))}"
 
   monitoring {
-    enabled = "${lookup(var.worker_groups_launch_template[count.index], "enable_monitoring", local.workers_group_launch_template_defaults["enable_monitoring"])}"
+    enabled = lookup(var.worker_groups_launch_template[count.index], "enable_monitoring", local.workers_group_launch_template_defaults["enable_monitoring"])
   }
 
   placement {
-    tenancy = "${lookup(var.worker_groups_launch_template[count.index], "placement_tenancy", local.workers_group_launch_template_defaults["placement_tenancy"])}"
+    tenancy = lookup(var.worker_groups_launch_template[count.index], "placement_tenancy", local.workers_group_launch_template_defaults["placement_tenancy"])
   }
 
-  count = "${var.worker_group_launch_template_count}"
+  count = var.worker_group_launch_template_count
 
   lifecycle {
     create_before_destroy = true
   }
 
   block_device_mappings {
-    device_name = "${data.aws_ami.eks_worker.root_device_name}"
+    device_name = data.aws_ami.eks_worker.root_device_name
 
     ebs {
       volume_size           = "${lookup(var.worker_groups_launch_template[count.index], "root_volume_size", local.workers_group_launch_template_defaults["root_volume_size"])}"
