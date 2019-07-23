@@ -13,6 +13,16 @@ resource "aws_iam_instance_profile" "workers" {
   path        = var.iam_path
 }
 
+
+
+resource "aws_iam_instance_profile" "worker_nodes_instance_profile" {
+  count       = var.manage_worker_iam_resources ? var.worker_node_group_count : 0
+  name_prefix = aws_eks_cluster.eks_cluster.name
+  role        = lookup(var.worker_groups_launch_template_mixed[count.index], "iam_role_id",  lookup(local.workers_group_defaults, "iam_role_id"))
+  path        = var.iam_path
+}
+
+
 resource "aws_iam_role_policy_attachment" "workers_AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
   role       = aws_iam_role.workers.name

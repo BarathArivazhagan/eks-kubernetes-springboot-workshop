@@ -3,8 +3,8 @@ resource "aws_security_group" "workers_security_group" {
   description = "Security group for all nodes in the cluster."
   vpc_id      = var.vpc_id
   count       = var.worker_create_security_group ? 1 : 0
-  tags        = "${merge(var.tags, map("Name", "${aws_eks_cluster.eks_cluster.name}-eks_worker_sg", "kubernetes.io/cluster/${aws_eks_cluster.eks_cluster.name}", "owned"
-  ))}"
+  tags        = merge(var.tags, map("Name", "${aws_eks_cluster.eks_cluster.name}-eks_worker_sg", "kubernetes.io/cluster/${aws_eks_cluster.eks_cluster.name}", "owned"
+  ))
 }
 
 resource "aws_security_group_rule" "workers_sg_egress_internet" {

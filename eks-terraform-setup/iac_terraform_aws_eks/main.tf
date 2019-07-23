@@ -10,7 +10,7 @@ locals {
       # This will launch an autoscaling group with only On-Demand instances
       instance_type        = "t3.micro"
       additional_userdata  = "echo foo bar"
-      subnets              = "${module.vpc.private_subnets}"
+      subnets              =  module.vpc.private_subnets
       asg_desired_capacity = "2"
     }
   ]
@@ -52,9 +52,9 @@ module "eks" {
   tags                                 = local.tags
   vpc_id                               = module.vpc.eks_vpc_id
   worker_groups                        = local.worker_groups
-  worker_groups_launch_template        = "${local.worker_groups_launch_template}"
+  worker_groups_launch_template        = local.worker_groups_launch_template
   worker_group_count                   = "1"
-  worker_group_launch_template_count   = "1"
+  worker_node_group_count              = "1"
   worker_additional_security_group_ids = [""]
   map_roles                            = var.map_roles
   map_roles_count                      = var.map_roles_count

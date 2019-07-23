@@ -157,7 +157,7 @@ variable "worker_groups_launch_template" {
   ]
 }
 
-variable "worker_group_launch_template_count" {
+variable "worker_node_group_count" {
   description = "The number of maps contained within the worker_groups_launch_template list."
   type        = "string"
   default     = "0"

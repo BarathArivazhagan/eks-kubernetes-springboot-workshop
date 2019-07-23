@@ -34,20 +34,20 @@ EOS
 data "aws_caller_identity" "current" {}
 
 data "template_file" "launch_template_mixed_worker_role_arns" {
-  count    = var.worker_group_launch_template_mixed_count
+  count    = var.worker_node_group_mixed_count
   template = file("${path.module}/templates/worker-role.tpl")
 
   vars  = {
-    worker_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${element(coalescelist(aws_iam_instance_profile.workers_launch_template_mixed.*.role, data.aws_iam_instance_profile.custom_worker_group_launch_template_mixed_iam_instance_profile.*.role_name), count.index)}"
+    worker_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${element(coalescelist(aws_iam_instance_profile.worker_nodes_instance_profile.*.role, data.aws_iam_instance_profile.custom_worker_group_launch_template_mixed_iam_instance_profile.*.role_name), count.index)}"
   }
 }
 
 data "template_file" "launch_template_worker_role_arns" {
-  count    = var.worker_group_launch_template_count
+  count    = var.worker_node_group_count
   template = file("${path.module}/templates/worker-role.tpl")
 
   vars = {
-    worker_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${element(coalescelist(aws_iam_instance_profile.workers_launch_template.*.role, data.aws_iam_instance_profile.custom_worker_group_launch_template_iam_instance_profile.*.role_name), count.index)}"
+    worker_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${element(coalescelist(aws_iam_instance_profile.worker_nodes_instance_profile.*.role, data.aws_iam_instance_profile.custom_worker_group_launch_template_iam_instance_profile.*.role_name), count.index)}"
   }
 }
 
