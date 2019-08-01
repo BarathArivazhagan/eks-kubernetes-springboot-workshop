@@ -6,7 +6,7 @@ resource "aws_instance" "eks_bastion" {
   instance_type = var.bastion_instance_type
   user_data = file("${path.module}/artifacts/eks_bastion_user_data")
   subnet_id = var.public_subnets[0]
-  security_groups = [aws_security_group.eks_bastion_sg]
+  security_groups = [aws_security_group.eks_bastion_sg.id]
   iam_instance_profile = var.bastion_instance_role
   tags = {
     Name = join("-",[var.cluster_name,"eks-bastion"])
