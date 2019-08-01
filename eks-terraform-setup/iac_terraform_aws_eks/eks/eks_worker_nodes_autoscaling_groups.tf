@@ -75,7 +75,7 @@ resource "aws_autoscaling_group" "worker_nodes_asg_mixed" {
     }
   }
 
-  tags = ["${concat(
+  tags = concat(
     list(
       map("key", "Name", "value", "${aws_eks_cluster.eks_cluster.name}-${lookup(var.worker_nodes_mixed_groups[count.index], "name", count.index)}-eks_asg", "propagate_at_launch", true),
       map("key", "kubernetes.io/cluster/${aws_eks_cluster.eks_cluster.name}", "value", "owned", "propagate_at_launch", true),
@@ -85,7 +85,7 @@ resource "aws_autoscaling_group" "worker_nodes_asg_mixed" {
     ),
     local.asg_tags,
     var.worker_group_tags[contains(keys(var.worker_group_tags), "${lookup(var.worker_nodes_mixed_groups[count.index], "name", count.index)}") ? "${lookup(var.worker_nodes_mixed_groups[count.index], "name", count.index)}" : "default"])
-  }"]
+
 
   lifecycle {
     create_before_destroy = true
