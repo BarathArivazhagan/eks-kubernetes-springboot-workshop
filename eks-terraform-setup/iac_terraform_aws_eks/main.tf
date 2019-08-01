@@ -61,10 +61,13 @@ module "eks" {
   worker_nodes_mixed_groups            = local.worker_nodes_mixed_groups
   worker_additional_security_group_ids = [""]
   bastion                              = true
+  bastion_instance_role                = var. bastion_instance_role
+  bastion_ami_id                       = var.bastion_ami_id
   map_roles                            = var.map_roles
   map_roles_count                      = var.map_roles_count
   map_users                            = var.map_users
   map_users_count                      = var.map_users_count
   map_accounts                         = var.map_accounts
   map_accounts_count                   = var.map_accounts_count
+
 }

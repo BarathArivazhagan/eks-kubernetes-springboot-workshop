@@ -6,11 +6,7 @@ resource "aws_autoscaling_group" "worker_nodes_asg" {
   desired_capacity  = lookup(var.worker_nodes_on_demand_groups[count.index], "asg_desired_capacity",local.worker_nodes_on_demand_groups_defaults["asg_desired_capacity"])
 
   force_delete      = lookup(var.worker_nodes_on_demand_groups[count.index], "asg_force_delete", local.worker_nodes_on_demand_groups_defaults["asg_force_delete"])
-  //target_group_arns = ["${compact(split(",", coalesce(lookup(var.worker_groups_launch_template[count.index], "target_group_arns", ""), local.workers_group_launch_template_defaults["target_group_arns"])))}"]
-  //target_group_arns = []
-
-
-    launch_template {
+  launch_template {
 
         id = element(aws_launch_template.workers_launch_template.*.id, count.index)
         version            = "$Latest"

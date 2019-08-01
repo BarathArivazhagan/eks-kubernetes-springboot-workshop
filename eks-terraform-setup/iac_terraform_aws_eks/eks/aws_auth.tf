@@ -44,7 +44,7 @@ data "template_file" "launch_template_mixed_worker_role_arns" {
 
 data "template_file" "launch_template_worker_role_arns" {
   count    = length(var.worker_nodes_on_demand_groups)
-  template = file("${path.module}/templates/worker-role.tpl")
+  template = "${file("${path.module}/templates/worker-role.tpl")}"
 
   vars = {
     worker_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${element(coalescelist(aws_iam_instance_profile.worker_nodes_instance_profile.*.role, data.aws_iam_instance_profile.custom_worker_group_launch_template_iam_instance_profile.*.role_name), count.index)}"
@@ -52,8 +52,9 @@ data "template_file" "launch_template_worker_role_arns" {
 }
 
 data "template_file" "worker_role_arns" {
+
   count    =  length(var.worker_nodes_on_demand_groups)
-  template =  file("${path.module}/templates/worker-role.tpl")
+  template =  "${file("${path.module}/templates/worker-role.tpl")}"
 
   vars = {
     worker_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${element(coalescelist(aws_iam_instance_profile.workers.*.role, data.aws_iam_instance_profile.custom_worker_group_iam_instance_profile.*.role_name), count.index)}"
@@ -61,7 +62,7 @@ data "template_file" "worker_role_arns" {
 }
 
 data "template_file" "config_map_aws_auth" {
-  template = file("${path.module}/templates/config-map-aws-auth.yaml.tpl")
+  template = "${file("${path.module}/templates/config-map-aws-auth.yaml.tpl")}"
 
   vars = {
     worker_role_arn = join("", distinct(concat(data.template_file.launch_template_worker_role_arns.*.rendered, data.template_file.worker_role_arns.*.rendered, data.template_file.launch_template_mixed_worker_role_arns.*.rendered)))
@@ -73,7 +74,7 @@ data "template_file" "config_map_aws_auth" {
 
 data "template_file" "map_users" {
   count    = var.map_users_count
-  template = file("${path.module}/templates/config-map-aws-auth-map-users.yaml.tpl")
+  template = "${file("${path.module}/templates/config-map-aws-auth-map-users.yaml.tpl")}"
 
   vars = {
     user_arn = lookup(var.map_users[count.index], "user_arn")
@@ -84,7 +85,7 @@ data "template_file" "map_users" {
 
 data "template_file" "map_roles" {
   count    = var.map_roles_count
-  template = file("${path.module}/templates/config-map-aws-auth-map-roles.yaml.tpl")
+  template = "${file("${path.module}/templates/config-map-aws-auth-map-roles.yaml.tpl")}"
 
   vars = {
     role_arn = lookup(var.map_roles[count.index], "role_arn")

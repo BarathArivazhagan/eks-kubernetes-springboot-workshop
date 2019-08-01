@@ -289,3 +289,5 @@ variable "bastion_instance_type" {
 variable "bastion_ami_id" {
 
 }
+
+variable "bastion_instance_role" {}
