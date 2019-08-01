@@ -73,50 +73,50 @@ data "template_file" "kubeconfig" {
 
 
 
-data "template_file" "userdata" {
-  count    = var.worker_group_count
+data "template_file" "launch_template_userdata" {
+  count    =  length(var.worker_nodes_on_demand_groups)
   template = file("${path.module}/templates/userdata.sh.tpl")
 
   vars = {
     cluster_name         = aws_eks_cluster.eks_cluster.name
     endpoint             = aws_eks_cluster.eks_cluster.endpoint
     cluster_auth_base64  = aws_eks_cluster.eks_cluster.certificate_authority.0.data
-    pre_userdata         = lookup(var.worker_groups[count.index], "pre_userdata", local.workers_group_defaults["pre_userdata"])
-    additional_userdata  = lookup(var.worker_groups[count.index], "additional_userdata", local.workers_group_defaults["additional_userdata"])
-    bootstrap_extra_args = lookup(var.worker_groups[count.index], "bootstrap_extra_args", local.workers_group_defaults["bootstrap_extra_args"])
-    kubelet_extra_args   = lookup(var.worker_groups[count.index], "kubelet_extra_args", local.workers_group_defaults["kubelet_extra_args"])
-    enable_docker_bridge = lookup(var.worker_groups[count.index], "enable_docker_bridge", local.workers_group_defaults["enable_docker_bridge"])
+    pre_userdata         = lookup(var.worker_nodes_on_demand_groups[count.index], "pre_userdata", local.worker_nodes_on_demand_groups_defaults["pre_userdata"])
+    additional_userdata  = lookup(var.worker_nodes_on_demand_groups[count.index], "additional_userdata", local.worker_nodes_on_demand_groups_defaults["additional_userdata"])
+    bootstrap_extra_args = lookup(var.worker_nodes_on_demand_groups[count.index], "bootstrap_extra_args", local.worker_nodes_on_demand_groups_defaults["bootstrap_extra_args"])
+    kubelet_extra_args   = lookup(var.worker_nodes_on_demand_groups[count.index], "kubelet_extra_args", local.worker_nodes_on_demand_groups_defaults["kubelet_extra_args"])
+    enable_docker_bridge = lookup(var.worker_nodes_on_demand_groups[count.index], "enable_docker_bridge", local.worker_nodes_on_demand_groups_defaults["enable_docker_bridge"])
   }
 }
 
-data "template_file" "launch_template_userdata" {
-  count    = var.worker_node_group_count
+data "template_file" "launch_template_userdata_mixed" {
+  count    = length(var.worker_nodes_mixed_groups)
   template = file("${path.module}/templates/userdata.sh.tpl")
 
   vars = {
     cluster_name         = aws_eks_cluster.eks_cluster.name
     endpoint             = aws_eks_cluster.eks_cluster.endpoint
     cluster_auth_base64  = aws_eks_cluster.eks_cluster.certificate_authority.0.data
-    pre_userdata         = lookup(var.worker_groups_launch_template[count.index], "pre_userdata", local.workers_group_defaults["pre_userdata"])
-    additional_userdata  = lookup(var.worker_groups_launch_template[count.index], "additional_userdata", local.workers_group_defaults["additional_userdata"])
-    bootstrap_extra_args = lookup(var.worker_groups_launch_template[count.index], "bootstrap_extra_args", local.workers_group_defaults["bootstrap_extra_args"])
-    kubelet_extra_args   = lookup(var.worker_groups_launch_template[count.index], "kubelet_extra_args", local.workers_group_defaults["kubelet_extra_args"])
-    enable_docker_bridge = lookup(var.worker_groups[count.index], "enable_docker_bridge", local.workers_group_defaults["enable_docker_bridge"])
+    pre_userdata         = lookup(var.worker_nodes_mixed_groups[count.index], "pre_userdata", local.worker_nodes_mixed_groups_defaults["pre_userdata"])
+    additional_userdata  = lookup(var.worker_nodes_mixed_groups[count.index], "additional_userdata", local.worker_nodes_mixed_groups_defaults["additional_userdata"])
+    bootstrap_extra_args = lookup(var.worker_nodes_mixed_groups[count.index], "bootstrap_extra_args", local.worker_nodes_mixed_groups_defaults["bootstrap_extra_args"])
+    kubelet_extra_args   = lookup(var.worker_nodes_mixed_groups[count.index], "kubelet_extra_args", local.worker_nodes_mixed_groups_defaults["kubelet_extra_args"])
+    enable_docker_bridge = lookup(var.worker_nodes_mixed_groups[count.index], "enable_docker_bridge", local.worker_nodes_mixed_groups_defaults["enable_docker_bridge"])
   }
 }
 
 data "template_file" "workers_launch_template_mixed" {
-  count    = var.worker_node_group_mixed_count
+  count    = length(var.worker_nodes_mixed_groups)
   template = file("${path.module}/templates/userdata.sh.tpl")
 
   vars = {
     cluster_name         = aws_eks_cluster.eks_cluster.name
     endpoint             = aws_eks_cluster.eks_cluster.endpoint
     cluster_auth_base64  = aws_eks_cluster.eks_cluster.certificate_authority.0.data
-    pre_userdata         = lookup(var.worker_groups_launch_template_mixed[count.index], "pre_userdata", local.workers_group_defaults["pre_userdata"])
-    additional_userdata  = lookup(var.worker_groups_launch_template_mixed[count.index], "additional_userdata", local.workers_group_defaults["additional_userdata"])
-    bootstrap_extra_args = lookup(var.worker_groups_launch_template_mixed[count.index], "bootstrap_extra_args", local.workers_group_defaults["bootstrap_extra_args"])
-    kubelet_extra_args   = lookup(var.worker_groups_launch_template_mixed[count.index], "kubelet_extra_args", local.workers_group_defaults["kubelet_extra_args"])
+    pre_userdata         = lookup(var.worker_nodes_mixed_groups[count.index], "pre_userdata", local.worker_nodes_mixed_groups_defaults["pre_userdata"])
+    additional_userdata  = lookup(var.worker_nodes_mixed_groups[count.index], "additional_userdata", local.worker_nodes_mixed_groups_defaults["additional_userdata"])
+    bootstrap_extra_args = lookup(var.worker_nodes_mixed_groups[count.index], "bootstrap_extra_args", local.worker_nodes_mixed_groups_defaults["bootstrap_extra_args"])
+    kubelet_extra_args   = lookup(var.worker_nodes_mixed_groups[count.index], "kubelet_extra_args", local.worker_nodes_mixed_groups_defaults["kubelet_extra_args"])
   }
 }
 
@@ -126,16 +126,16 @@ data "aws_iam_role" "custom_cluster_iam_role" {
 }
 
 data "aws_iam_instance_profile" "custom_worker_group_iam_instance_profile" {
-  count = var.manage_worker_iam_resources ? 0 : var.worker_group_count
-  name  = lookup(var.worker_groups[count.index], "iam_instance_profile_name", local.workers_group_defaults["iam_instance_profile_name"])
+  count = var.manage_worker_iam_resources ? 0 : length(var.worker_nodes_on_demand_groups)
+  name  = lookup(var.worker_nodes_on_demand_groups[count.index], "iam_instance_profile_name", local.worker_nodes_on_demand_groups_defaults["iam_instance_profile_name"])
 }
 
 data "aws_iam_instance_profile" "custom_worker_group_launch_template_iam_instance_profile" {
-  count = var.manage_worker_iam_resources ? 0 : var.worker_node_group_count
-  name  = lookup(var.worker_groups_launch_template[count.index], "iam_instance_profile_name", local.workers_group_defaults["iam_instance_profile_name"])
+  count = var.manage_worker_iam_resources ? 0 : length(var.worker_nodes_mixed_groups)
+  name  = lookup(var.worker_nodes_on_demand_groups[count.index], "iam_instance_profile_name", local.worker_nodes_on_demand_groups_defaults["iam_instance_profile_name"])
 }
 
 data "aws_iam_instance_profile" "custom_worker_group_launch_template_mixed_iam_instance_profile" {
-  count = var.manage_worker_iam_resources ? 0 : var.worker_node_group_mixed_count
-  name  = lookup(var.worker_groups_launch_template_mixed[count.index], "iam_instance_profile_name", local.workers_group_defaults["iam_instance_profile_name"])
+  count = var.manage_worker_iam_resources ? 0 : length(var.worker_nodes_mixed_groups)
+  name  = lookup(var.worker_nodes_mixed_groups[count.index], "iam_instance_profile_name", local.worker_nodes_mixed_groups_defaults["iam_instance_profile_name"])
 }

@@ -8,17 +8,17 @@ resource "aws_iam_role" "workers" {
 
 resource "aws_iam_instance_profile" "workers" {
   name_prefix = aws_eks_cluster.eks_cluster.name
-  role        = lookup(var.worker_groups[count.index], "iam_role_id",  lookup(local.workers_group_defaults, "iam_role_id"))
-  count       = var.worker_group_count
+  role        = lookup(var.worker_nodes_on_demand_groups[count.index], "iam_role_id",  lookup(local.worker_nodes_on_demand_groups_defaults, "iam_role_id"))
+  count       =  length(var.worker_nodes_on_demand_groups)
   path        = var.iam_path
 }
 
 
 
 resource "aws_iam_instance_profile" "worker_nodes_instance_profile" {
-  count       = var.manage_worker_iam_resources ? var.worker_node_group_count : 0
+  count       = var.manage_worker_iam_resources ? length(var.worker_nodes_on_demand_groups): 0
   name_prefix = aws_eks_cluster.eks_cluster.name
-  role        = lookup(var.worker_groups_launch_template_mixed[count.index], "iam_role_id",  lookup(local.workers_group_defaults, "iam_role_id"))
+  role        = lookup(var.worker_nodes_mixed_groups[count.index], "iam_role_id",  lookup(local.worker_nodes_mixed_groups_defaults, "iam_role_id"))
   path        = var.iam_path
 }
 

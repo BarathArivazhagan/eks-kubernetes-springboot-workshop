@@ -5,26 +5,32 @@ provider "aws" {
 
 locals {
 
-  worker_groups = [
+  # This will launch an autoscaling group with only On-Demand instances
+  worker_nodes_on_demand_groups = [
     {
-      # This will launch an autoscaling group with only On-Demand instances
+
       instance_type        = "t3.micro"
-      additional_userdata  = "echo foo bar"
+      additional_userdata  = ""
       subnets              =  module.vpc.private_subnets
-      asg_desired_capacity = "2"
+      asg_desired_capacity = "1"                             # Desired worker capacity in the autoscaling group.
+      asg_max_size         = "3"                             # Maximum worker capacity in the autoscaling group.
+      asg_min_size         = "1"
+      key_name             = var.worker_node_key_name
     }
   ]
-  worker_groups_launch_template = [
+  # This will launch an autoscaling group with only Spot Fleet instances
+  worker_nodes_mixed_groups = [
     {
-      # This will launch an autoscaling group with only Spot Fleet instances
+
       instance_type                            = "t3.micro"
-      additional_userdata                      = "echo foo bar"
-      subnets                                  = "${module.vpc.private_subnets}"
+      additional_userdata                      = ""
+      subnets                                  = module.vpc.private_subnets
       additional_security_group_ids            = ""
       override_instance_type                   = "t3.small"
       asg_desired_capacity                     = "1"
       spot_instance_pools                      = 3
       on_demand_percentage_above_base_capacity = "0"
+      key_name                                 = var.worker_node_key_name
     }
   ]
   tags = {
@@ -51,11 +57,10 @@ module "eks" {
   public_subnets                       = module.vpc.public_subnets
   tags                                 = local.tags
   vpc_id                               = module.vpc.eks_vpc_id
-  worker_groups                        = local.worker_groups
-  worker_groups_launch_template        = local.worker_groups_launch_template
-  worker_group_count                   = "1"
-  worker_node_group_count              = "1"
+  worker_nodes_on_demand_groups        = local.worker_nodes_on_demand_groups
+  worker_nodes_mixed_groups            = local.worker_nodes_mixed_groups
   worker_additional_security_group_ids = [""]
+  bastion                              = true
   map_roles                            = var.map_roles
   map_roles_count                      = var.map_roles_count
   map_users                            = var.map_users

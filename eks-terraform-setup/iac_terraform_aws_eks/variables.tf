@@ -273,3 +273,19 @@ variable "iam_path" {
   default     = "/"
 }
 
+
+variable "bastion" {
+ description = "bastion host required"
+}
+
+variable "worker_node_key_name" {
+  description = "key name to be attached to the worker nodes"
+}
+
+variable "bastion_instance_type" {
+
+}
+
+variable "bastion_ami_id" {
+
+}

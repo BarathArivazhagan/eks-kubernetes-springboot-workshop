@@ -74,3 +74,7 @@ output "worker_iam_role_arn" {
   value       = aws_iam_role.workers.arn
 }
 
+output "eks_bastion_host" {
+  value = var.bastion ? aws_instance.eks_bastion[0].private_ip : ""
+}
+

@@ -113,8 +113,8 @@ variable "vpc_id" {
   description = "VPC where the cluster and workers will be deployed."
 }
 
-variable "worker_groups" {
-  description = "A list of maps defining worker group configurations to be defined using AWS Launch Configurations. See workers_group_defaults for valid keys."
+variable "worker_nodes_on_demand_groups" {
+  description = "A list of maps defining worker node group configurations to be defined using AWS Launch Configurations. See workers_group_defaults for valid keys."
   type        = "list"
 
   default = [
@@ -124,17 +124,6 @@ variable "worker_groups" {
   ]
 }
 
-variable "worker_group_count" {
-  description = "The number of maps contained within the worker_groups list."
-  type        = "string"
-  default     = "1"
-}
-
-variable "workers_group_defaults" {
-  description = "Override default values for target groups. See workers_group_defaults_defaults in local.tf for valid keys."
-  type        = "map"
-  default     = {}
-}
 
 variable "worker_group_tags" {
   description = "A map defining extra tags to be applied to the worker group ASG."
@@ -145,7 +134,7 @@ variable "worker_group_tags" {
   }
 }
 
-variable "worker_groups_launch_template" {
+variable "worker_nodes_mixed_groups" {
   description = "A list of maps defining worker group configurations to be defined using AWS Launch Templates. See workers_group_defaults for valid keys."
   type        = "list"
 
@@ -154,29 +143,6 @@ variable "worker_groups_launch_template" {
       name = "default"
     }
   ]
-}
-
-variable "worker_groups_launch_template_mixed" {
-  description = "A list of maps defining worker group configurations to be defined using AWS Launch Templates. See workers_group_defaults for valid keys."
-  type        = "list"
-
-  default = [
-    {
-      name = "default"
-    }
-  ]
-}
-
-variable "worker_node_group_count" {
-  description = "The number of maps contained within the worker_groups_launch_template_mixed list."
-  type        = "string"
-  default     = "0"
-}
-
-variable "worker_node_group_mixed_count" {
-  description = "The number of maps contained within the worker_groups_launch_template list."
-  type        = "string"
-  default     = "0"
 }
 
 variable "worker_security_group_id" {
@@ -283,11 +249,6 @@ variable "worker_group_launch_template_tags" {
   }
 }
 
-variable "workers_group_launch_template_defaults" {
-  description = "Override default values for target groups. See workers_group_defaults_defaults in local.tf for valid keys."
-  type        = "map"
-  default     = {}
-}
 
 variable "cluster_endpoint_public_access" {
   description = "Indicates whether or not the Amazon EKS public API server endpoint is enabled."
@@ -307,4 +268,17 @@ variable "cluster_iam_role_name" {
 variable "manage_worker_iam_resources" {
   description = "Whether to let the module manage worker IAM resources. If set to false, iam_instance_profile_name must be specified for workers."
   default     = true
+}
+
+variable "bastion" {
+  default = true
+}
+
+variable "bastion_instance_type" {
+  default = "t2.micro"
+}
+
+
+variable "bastion_ami_id" {
+  default = ""
 }
